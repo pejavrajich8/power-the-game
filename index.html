@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>POWER — The Game (1981)</title>
+<style>
+:root{
+  --water:#8fc3d4; --water2:#7ab3c7; --land:#7a9e56; --land2:#6b9149;
+  --grid:#d6357f; --paper:#f3ead2; --ink:#2c2620;
+  --red:#c0392b; --yellow:#e7c428; --white:#f2f0e6; --black:#2b2b30;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif; background:#1b2430; color:#e8e4da; overflow:hidden;}
+#app{display:flex; height:100vh;}
+#boardwrap{flex:1; display:flex; align-items:center; justify-content:center; min-width:0; padding:8px; position:relative;}
+#board{max-height:100%; max-width:100%; aspect-ratio:1/1; user-select:none; -webkit-user-select:none;}
+#side{width:360px; min-width:360px; background:#141b25; border-left:1px solid #2c3a4d; display:flex; flex-direction:column; overflow:hidden;}
+#side .scroll{overflow-y:auto; flex:1; padding:12px;}
+.card{background:#1d2735; border:1px solid #314257; border-radius:10px; padding:10px 12px; margin-bottom:10px;}
+.card h3{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:#7e93ad; margin-bottom:6px;}
+#title{padding:12px; border-bottom:1px solid #2c3a4d; background:linear-gradient(180deg,#0e131b,#141b25);}
+#title .logo{font-weight:800; font-size:26px; letter-spacing:.12em; color:#fff;
+  text-shadow:0 0 8px #5fb6ff,0 0 22px #2d7fd6; font-style:italic;}
+#title .sub{font-size:11px; color:#7e93ad; letter-spacing:.2em; text-transform:uppercase;}
+.phasebar{display:flex; align-items:center; gap:8px; margin-top:8px;}
+.badge{display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; background:#2a3a50; color:#cfe3ff;}
+.badge.turn{background:#3d2d10; color:#ffd567;}
+#timer{margin-left:auto; font-variant-numeric:tabular-nums; font-weight:700; font-size:16px; color:#9adcff;}
+#timer.low{color:#ff7b6b; animation:blink 1s steps(2) infinite;}
+@keyframes blink{50%{opacity:.4;}}
+.armychips{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+.chip{border-radius:8px; padding:6px 8px; font-size:12px; border:1px solid #314257; background:#16202d; display:flex; align-items:center; gap:7px;}
+.chip .dot{width:14px; height:14px; border-radius:50%; border:2px solid #0008; flex:none;}
+.chip.dead{opacity:.38; text-decoration:line-through;}
+.chip .pp{margin-left:auto; font-weight:700; color:#ffd567;}
+.chip.me{outline:2px solid #ffd567;}
+#cmdpad{background:var(--paper); color:var(--ink); border-radius:8px; padding:8px 10px; font-family:"Courier New",monospace;}
+#cmdpad .padtitle{font-weight:700; font-size:12px; letter-spacing:.1em; border-bottom:2px solid var(--ink); padding-bottom:3px; margin-bottom:4px; display:flex;}
+#cmdpad .padtitle span:last-child{margin-left:auto;}
+#cmdpad ol{list-style:none;}
+#cmdpad li{font-size:13px; padding:3px 2px; border-bottom:1px dashed #b9ad8d; min-height:22px; display:flex; align-items:center;}
+#cmdpad li .x{margin-left:auto; cursor:pointer; color:#a33; font-weight:700; padding:0 5px;}
+#cmdpad li .x:hover{background:#e4d7b4; border-radius:4px;}
+#cmdpad li.exec{background:#fff3b0;}
+#cmdpad li.cancelled{color:#a33; text-decoration:line-through;}
+.btn{display:inline-block; border:1px solid #46618a; background:#23344d; color:#dce9ff; font:inherit; font-size:13px; font-weight:600;
+  border-radius:8px; padding:8px 12px; cursor:pointer; margin:2px 2px 2px 0;}
+.btn:hover:not(:disabled){background:#2d4366;}
+.btn:disabled{opacity:.4; cursor:default;}
+.btn.primary{background:#b8860b; border-color:#e0a818; color:#fff;}
+.btn.primary:hover:not(:disabled){background:#d29a10;}
+.btn.danger{background:#5e2420; border-color:#a04038;}
+.btn.small{padding:3px 8px; font-size:12px;}
+#inspector .rowpiece{display:flex; align-items:center; gap:6px; padding:3px 4px; border-radius:6px; font-size:13px;}
+#inspector .rowpiece:hover{background:#26354a;}
+#inspector .grp{margin:4px 0;}
+#inspector .grphead{font-size:12px; font-weight:700; display:flex; gap:6px; align-items:center;}
+#log{font-size:12px; line-height:1.5; color:#b8c6d9; max-height:170px; overflow-y:auto;}
+#log .r{padding:1px 0; border-bottom:1px solid #1f2a3a;}
+#log .imp{color:#ffd567; font-weight:600;}
+#log .bad{color:#ff8d7e;}
+#overlay{position:fixed; inset:0; background:rgba(8,12,18,.92); display:flex; align-items:center; justify-content:center; z-index:50;}
+#overlay.hidden{display:none;}
+.panel{background:#1a2433; border:1px solid #3a4f6b; border-radius:14px; padding:28px 32px; width:min(560px,92vw); max-height:90vh; overflow-y:auto;}
+.panel h1{font-size:30px; font-style:italic; letter-spacing:.1em; color:#fff; text-shadow:0 0 10px #5fb6ff,0 0 26px #2d7fd6; margin-bottom:2px;}
+.panel h2{font-size:16px; margin:14px 0 6px; color:#ffd567;}
+.panel p,.panel li{font-size:13.5px; line-height:1.55; color:#c7d3e2;}
+.panel ul{padding-left:18px;}
+.panel label{font-size:13px; color:#9fb2c8; display:block; margin:10px 0 4px;}
+.panel input[type=text]{background:#101822; color:#e8e4da; border:1px solid #3a4f6b; border-radius:6px; padding:7px 9px; font:inherit; width:100%;}
+.segs{display:flex; gap:6px; flex-wrap:wrap;}
+.segs .seg{border:1px solid #3a4f6b; background:#101822; color:#c7d3e2; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px;}
+.segs .seg.on{background:#b8860b; color:#fff; border-color:#e0a818;}
+table.ref{border-collapse:collapse; width:100%; margin:6px 0; font-size:12.5px;}
+table.ref th,table.ref td{border:1px solid #33465e; padding:4px 7px; text-align:center; color:#c7d3e2;}
+table.ref th{background:#23344d; color:#fff;}
+.passname{font-size:24px; font-weight:800; margin:8px 0 14px;}
+svg .sectorlbl{font-size:15px; font-weight:800; pointer-events:none;}
+svg .lanelbl{fill:#23607a; font-size:13px; font-weight:700; font-style:italic; pointer-events:none; opacity:.85;}
+svg .isllbl{fill:#2c4a1e; font-size:12px; font-weight:800; pointer-events:none;}
+svg .areaov{fill:#fff; opacity:0; cursor:pointer;}
+svg .areaov.hl{opacity:.34; fill:#ffe45c; stroke:#ffba00; stroke-width:3; animation:pulse 1.1s ease-in-out infinite;}
+svg .areaov.sel{opacity:.22; fill:#7fd4ff;}
+svg .areaov.combat{opacity:.4; fill:#ff3b2f; animation:pulse .5s ease-in-out infinite;}
+@keyframes pulse{50%{opacity:.16;}}
+svg .piece{transition:transform .5s cubic-bezier(.45,.05,.25,1); cursor:default;}
+svg .piece.own{cursor:pointer;}
+svg .piece.selp .ring{display:block;}
+svg .piece .ring{display:none; fill:none; stroke:#ffe45c; stroke-width:2.5; stroke-dasharray:4 3;}
+svg .piece.ghost{opacity:0; transform:scale(.2);}
+svg .boom{pointer-events:none;}
+.flying{transition:transform 1s cubic-bezier(.5,0,.4,1) !important;}
+#bigmsg{position:absolute; left:50%; top:42%; transform:translate(-50%,-50%); font-size:36px; font-weight:900; font-style:italic;
+  letter-spacing:.06em; color:#fff; text-shadow:0 0 14px #ffae00,0 2px 2px #000; pointer-events:none; opacity:0; transition:opacity .3s; z-index:30; text-align:center;}
+#bigmsg.show{opacity:1;}
+.mini{font-size:11.5px; color:#7e93ad;}
+.kbd{background:#101822;border:1px solid #3a4f6b;border-radius:4px;padding:0 5px;font-size:11px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="boardwrap">
+    <svg id="board" viewBox="0 0 922 922" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="bigmsg"></div>
+  </div>
+  <div id="side">
+    <div id="title">
+      <div class="logo">POWER</div>
+      <div class="sub">the board game &nbsp;·&nbsp; 1981</div>
+      <div class="phasebar">
+        <span class="badge" id="roundbadge">Round 1</span>
+        <span class="badge turn" id="phasebadge">Setup</span>
+        <span id="timer"></span>
+      </div>
+    </div>
+    <div class="scroll">
+      <div class="card"><h3>Forces</h3><div class="armychips" id="chips"></div></div>
+      <div class="card" id="padcard">
+        <h3>Command pad <span id="cmdcount" style="float:right;color:#ffd567;"></span></h3>
+        <div id="cmdpad">
+          <div class="padtitle"><span>PIECE&nbsp;&nbsp;FROM&nbsp;&nbsp;&nbsp;TO</span><span id="padowner"></span></div>
+          <ol id="cmdlist"></ol>
+        </div>
+        <div style="margin-top:8px;">
+          <button class="btn primary" id="donebtn">Done — pass the device ➜</button>
+        </div>
+      </div>
+      <div class="card" id="inspcard"><h3 id="insptitle">Inspector</h3><div id="inspector" class="mini">Click any sector, island, sea lane, HQ or reserve to inspect it. Click one of your pieces to move it.</div></div>
+      <div class="card"><h3>Battle log</h3><div id="log"></div></div>
+      <div class="card" style="text-align:center;">
+        <button class="btn" id="rulesbtn">Rules</button>
+        <button class="btn" id="scorebtn" title="Tournament scoring — highest total power value wins">End &amp; score</button>
+        <button class="btn danger" id="restartbtn">Restart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay"><div class="panel" id="overlaypanel"></div></div>
+
+<script>
+"use strict";
+/* ============================================================
+   POWER “The Game” (1981, Monte B. Young / Power Games Intl.)
+   Faithful digital adaptation — local hotseat play.
+   Rules implemented from the official PGI rulebook (1995 ed.).
+   ============================================================ */
+
+/* ---------------- constants ---------------- */
+const TYPES = {
+  I:{name:"Infantry",   mv:2, str:2,  dom:"g", big:"R", cost:2},
+  R:{name:"Regiment",   mv:2, str:20, dom:"g"},
+  T:{name:"Tank",       mv:3, str:3,  dom:"g", big:"H", cost:3},
+  H:{name:"Heavy Tank", mv:3, str:30, dom:"g"},
+  F:{name:"Fighter",    mv:5, str:5,  dom:"a", big:"B", cost:5},
+  B:{name:"Bomber",     mv:5, str:25, dom:"a"},
+  D:{name:"Destroyer",  mv:1, str:10, dom:"s", big:"C", cost:10},
+  C:{name:"Cruiser",    mv:1, str:50, dom:"s"},
+  M:{name:"Megamissile",mv:0, str:0,  dom:"m"},
+  FLAG:{name:"Flag",    mv:0, str:0,  dom:"x"},
+};
+const SMALLS=["I","T","F","D"];
+const SUPPLY = {I:9,R:3,T:6,H:3,F:6,B:3,D:6,C:3,M:99,FLAG:1};
+const ARMIES = [
+  {key:"R", name:"Red",    hex:"#c0392b", text:"#ffffff", stroke:"#5e120b"},
+  {key:"Y", name:"Yellow", hex:"#e7c428", text:"#3a3000", stroke:"#6b5800"},
+  {key:"W", name:"White",  hex:"#f2f0e6", text:"#444444", stroke:"#6f6a5a"},
+  {key:"K", name:"Black",  hex:"#3a3a41", text:"#eeeeee", stroke:"#000000"},
+];
+const CELL=78, MG=110, SZ=922;
+const MAXPP=10, PPCAP_PER_ROUND=3;
+
+/* ---------------- board geometry ---------------- */
+const areas={};           // id -> area
+const cellArea={};        // "r,c" -> areaId
+function reg(id,kind,cells,extra){
+  const a=Object.assign({id,kind,cells:cells||[]},extra||{});
+  if(a.cells.length){
+    a.cx = a.cells.reduce((s,c)=>s+c[1],0)/a.cells.length*CELL + MG + CELL/2;
+    a.cy = a.cells.reduce((s,c)=>s+c[0],0)/a.cells.length*CELL + MG + CELL/2;
+    a.cells.forEach(c=>cellArea[c[0]+","+c[1]]=id);
+  }
+  areas[id]=a; return a;
+}
+// countries: army idx -> block origin + sector index formula (8 nearest HQ corner, 0 nearest center)
+const C_BLOCKS=[
+  {army:0, r0:1,c0:1, idx:(r,c)=>8-(r*3+c)},          // Red TL, HQ (0,0)
+  {army:1, r0:1,c0:5, idx:(r,c)=>8-(r*3+(2-c))},      // Yellow TR, HQ (0,8)
+  {army:2, r0:5,c0:5, idx:(r,c)=>8-((2-r)*3+(2-c))},  // White BR, HQ (8,8)
+  {army:3, r0:5,c0:1, idx:(r,c)=>8-((2-r)*3+c)},      // Black BL, HQ (8,0)
+];
+C_BLOCKS.forEach(b=>{
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+    const idx=b.idx(r,c);
+    reg(ARMIES[b.army].key+idx,"sector",[[b.r0+r,b.c0+c]],{army:b.army,sec:idx});
+  }
+});
+reg("HQ-R","hq",[[0,0]],{army:0}); reg("HQ-Y","hq",[[0,8]],{army:1});
+reg("HQ-W","hq",[[8,8]],{army:2}); reg("HQ-K","hq",[[8,0]],{army:3});
+reg("NI","island",[[0,4]]); reg("EI","island",[[4,8]]); reg("SI","island",[[8,4]]);
+reg("WI","island",[[4,0]]); reg("XI","island",[[4,4]]);
+const LANES=[
+  ["S1",[[0,1],[0,2],[0,3]]], ["S2",[[0,5],[0,6],[0,7]]],
+  ["S3",[[1,8],[2,8],[3,8]]], ["S4",[[5,8],[6,8],[7,8]]],
+  ["S5",[[8,5],[8,6],[8,7]]], ["S6",[[8,1],[8,2],[8,3]]],
+  ["S7",[[5,0],[6,0],[7,0]]], ["S8",[[1,0],[2,0],[3,0]]],
+  ["S9",[[1,4],[2,4],[3,4]]], ["S10",[[4,5],[4,6],[4,7]]],
+  ["S11",[[5,4],[6,4],[7,4]]],["S12",[[4,1],[4,2],[4,3]]],
+];
+LANES.forEach(([id,cells])=>reg(id,"lane",cells));
+// reserves (no grid cells; tray rectangles in margins, pinwheel beside each HQ)
+reg("RV-R","reserve",[],{army:0, tray:{x:MG,y:6,w:CELL*4.4,h:MG-16,vert:false}});
+reg("RV-Y","reserve",[],{army:1, tray:{x:SZ-MG+10,y:MG,w:MG-16,h:CELL*4.4,vert:true}});
+reg("RV-W","reserve",[],{army:2, tray:{x:SZ-MG-CELL*4.4,y:SZ-MG+10,w:CELL*4.4,h:MG-16,vert:false}});
+reg("RV-K","reserve",[],{army:3, tray:{x:6,y:SZ-MG-CELL*4.4,w:MG-16,h:CELL*4.4,vert:true}});
+["RV-R","RV-Y","RV-W","RV-K"].forEach(id=>{const t=areas[id].tray; areas[id].cx=t.x+t.w/2; areas[id].cy=t.y+t.h/2;});
+
+const LANDKINDS=new Set(["sector","island","hq"]);
+function chebAdj(a,b){ // any pair of cells within Chebyshev distance 1
+  for(const [r1,c1] of a.cells)for(const [r2,c2] of b.cells)
+    if(Math.max(Math.abs(r1-r2),Math.abs(c1-c2))===1) return true;
+  return false;
+}
+function orthAdj(a,b){
+  for(const [r1,c1] of a.cells)for(const [r2,c2] of b.cells)
+    if(Math.abs(r1-r2)+Math.abs(c1-c2)===1) return true;
+  return false;
+}
+const landAdj={}, seaAdj={};
+const allIds=Object.keys(areas);
+for(const id of allIds){ landAdj[id]=[]; seaAdj[id]=[]; }
+for(const a of allIds)for(const b of allIds){
+  if(a===b) continue;
+  const A=areas[a],B=areas[b];
+  if(!A.cells.length||!B.cells.length) continue;
+  // land adjacency (ground & air): land areas touching (orth or diagonal)
+  if(LANDKINDS.has(A.kind)&&LANDKINDS.has(B.kind)&&chebAdj(A,B)) landAdj[a].push(b);
+  // sea adjacency: lanes, islands, HQs, coastal sectors (sector 4 of each country is landlocked)
+  const wat=x=>x.kind==="lane"||x.kind==="island"||x.kind==="hq"||(x.kind==="sector"&&x.sec!==4);
+  if(wat(A)&&wat(B)&&chebAdj(A,B)){
+    let ok=true;
+    if(A.kind==="sector"&&B.kind==="sector") ok=(A.army===B.army)&&orthAdj(A,B); // no diagonal across land
+    if((A.kind==="sector"&&B.kind==="hq")||(A.kind==="hq"&&B.kind==="sector")) ok=false; // harbor connects via lanes
+    if(A.kind==="lane"&&B.kind==="lane") ok=false; // every lane junction has an island or HQ between
+    if(ok) seaAdj[a].push(b);
+  }
+}
+
+/* ---------------- game state ---------------- */
+let G=null;        // committed (round-start during planning)
+let PG=null;       // planning ghost state for current seat
+let UI={sel:null, hls:[], inspect:null, mode:"setup", planSeat:0, speed:1, timerId:null, timeLeft:0};
+let pidSeq=1;
+
+function mkPiece(t,o,a){ return {id:pidSeq++, t, o, a, moved:false, exch:false, retreated:false, origin:a, launchTarget:null}; }
+function newGame(opts){
+  pidSeq=1;
+  const seats=[];
+  if(opts.players===4) for(let i=0;i<4;i++) seats.push({name:opts.names[i]||ARMIES[i].name,armies:[i],alive:true});
+  if(opts.players===3) for(let i=0;i<3;i++) seats.push({name:opts.names[i]||ARMIES[i].name,armies:[i],alive:true});
+  if(opts.players===2){ seats.push({name:opts.names[0]||"Player 1",armies:[0,3],alive:true});
+                        seats.push({name:opts.names[1]||"Player 2",armies:[1,2],alive:true}); }
+  const armies=ARMIES.map((a,i)=>({idx:i, pp:0, alive:true,
+    seat:seats.findIndex(s=>s.armies.includes(i)),   // -1 = mercenary
+    flagsHeld:[i]}));
+  const pieces=[];
+  for(let i=0;i<4;i++){
+    if(opts.players===3&&i===3){/* mercenary still gets a full setup */}
+    const hq="HQ-"+ARMIES[i].key;
+    pieces.push(mkPiece("FLAG",i,hq));
+    for(const t of ["I","I","T","T","F","F","D","D"]) pieces.push(mkPiece(t,i,hq));
+  }
+  G={seats, armies, pieces, round:1, official:0, mode:opts.players, useTimer:opts.timer,
+     commands:[], log:[], over:false};
+  G.cmdLimit = opts.players===2 ? 10 : 5;
+  G.planTime = opts.players===2 ? 360 : 180;
+}
+
+/* helpers */
+const piecesIn=(st,aid)=>st.pieces.filter(p=>p.a===aid);
+const armyPieces=(st,ai)=>st.pieces.filter(p=>p.o===ai&&p.t!=="FLAG");
+const stockLeft=(st,ai,t)=>SUPPLY[t]-st.pieces.filter(p=>p.o===ai&&p.t===t).length;
+const hqOf=ai=>"HQ-"+ARMIES[ai].key;
+const rvOf=ai=>"RV-"+ARMIES[ai].key;
+const countryOf=(aid)=>{const a=areas[aid]; return (a.kind==="sector"||a.kind==="hq")?a.army:null;};
+function clone(st){ return JSON.parse(JSON.stringify(st)); }
+function alivePlanSeats(){ // official first, then clockwise
+  const n=G.seats.length, out=[];
+  for(let k=0;k<n;k++){ const s=(G.official+k)%n; if(G.seats[s].alive) out.push(s); }
+  return out;
+}
+
+/* ---------------- movement rules ---------------- */
+function legalDests(st,p){
+  const A=areas[p.a], info=TYPES[p.t];
+  if(p.t==="FLAG") return [];
+  if(p.t==="M"){ // launch: anywhere (incl. reserves) — once only
+    if(p.moved) return [];
+    return Object.keys(areas);
+  }
+  if(p.moved) return [];
+  if(A.kind==="reserve"){
+    // reserve pieces may only move to own HQ (even ships/planes)
+    return [hqOf(p.o)];
+  }
+  if(p.exch) return []; // exchanged on the battlefield: cannot move this round
+  if(info.dom==="s"){
+    return seaAdj[p.a].slice();
+  }
+  // ground & air: BFS over land areas. Ground stops on islands & HQs; air stops on HQs only.
+  const stopKinds = info.dom==="g" ? new Set(["island","hq"]) : new Set(["hq"]);
+  const dist={[p.a]:0}; let frontier=[p.a]; const out=new Set();
+  for(let d=0; d<info.mv; d++){
+    const nx=[];
+    for(const cur of frontier){
+      if(cur!==p.a && stopKinds.has(areas[cur].kind)) continue;   // absorbing
+      for(const n of landAdj[cur]){
+        if(areas[n].kind==="reserve") continue;
+        if(dist[n]===undefined){ dist[n]=d+1; out.add(n); nx.push(n); }
+      }
+    }
+    frontier=nx;
+  }
+  return [...out];
+}
+
+/* ---------------- commands ---------------- */
+function notation(cmd){
+  const nm=id=>areas[id].kind==="reserve"?"RV":areas[id].kind==="hq"?"HQ-"+ARMIES[areas[id].army].key:id;
+  switch(cmd.kind){
+    case "move":   return `${cmd.t}  ${nm(cmd.from)} → ${nm(cmd.to)}`;
+    case "launch": return `M ⚡ ${nm(cmd.from)} → ${nm(cmd.to)}`;
+    case "buy":    return `X  ${TYPES[cmd.t].cost}P → ${cmd.t}`;
+    case "exch3":  return `X  3${cmd.t} → ${TYPES[cmd.t].big} @${nm(cmd.area)}`;
+    case "mega":   return `X  ${cmd.total}pwr → M @${nm(cmd.area)}`;
+  }
+}
+function seatCmds(seat){ return G.commands.filter(c=>c.seat===seat); }
+
+function applyCmd(st,cmd){ // returns {ok, info} and mutates st
+  const ai=cmd.army;
+  if(cmd.kind==="move"||cmd.kind==="launch"){
+    const p=st.pieces.find(x=>x.id===cmd.pid);
+    if(!p||p.o!==ai||p.a!==cmd.from) return {ok:false};
+    if(!legalDests(st,p).includes(cmd.to)) return {ok:false};
+    if(cmd.kind==="launch"){ p.moved=true; p.launchTarget=cmd.to; }
+    else { p.a=cmd.to; p.moved=true; }
+    return {ok:true,p};
+  }
+  if(cmd.kind==="buy"){
+    const army=st.armies[ai], cost=TYPES[cmd.t].cost;
+    if(army.pp<cost||stockLeft(st,ai,cmd.t)<=0) return {ok:false};
+    army.pp-=cost;
+    const np=mkPiece(cmd.t,ai,rvOf(ai)); np.exch=true; np.origin=rvOf(ai);
+    if(cmd.newPid) np.id=cmd.newPid; else cmd.newPid=np.id;
+    st.pieces.push(np);
+    return {ok:true,p:np};
+  }
+  if(cmd.kind==="exch3"){
+    const big=TYPES[cmd.t].big;
+    const three=st.pieces.filter(p=>p.o===ai&&p.t===cmd.t&&p.a===cmd.area).slice(0,3);
+    if(three.length<3||stockLeft(st,ai,big)<=0) return {ok:false};
+    st.pieces=st.pieces.filter(p=>!three.includes(p));
+    const np=mkPiece(big,ai,cmd.area); np.exch=true; np.origin=cmd.area;
+    if(cmd.newPid) np.id=cmd.newPid; else cmd.newPid=np.id;
+    st.pieces.push(np);
+    return {ok:true,p:np,removed:three};
+  }
+  if(cmd.kind==="mega"){
+    const sel=st.pieces.filter(p=>cmd.pids.includes(p.id)&&p.o===ai&&p.a===cmd.area);
+    const tot=sel.reduce((s,p)=>s+TYPES[p.t].str,0)+(cmd.pp||0);
+    if(sel.length!==cmd.pids.length||tot<100||st.armies[ai].pp<(cmd.pp||0)) return {ok:false};
+    st.armies[ai].pp-=(cmd.pp||0);
+    st.pieces=st.pieces.filter(p=>!sel.includes(p));
+    const np=mkPiece("M",ai,cmd.area); np.exch=true; np.origin=cmd.area;
+    if(cmd.newPid) np.id=cmd.newPid; else cmd.newPid=np.id;
+    st.pieces.push(np);
+    return {ok:true,p:np,removed:sel};
+  }
+  return {ok:false};
+}
+
+function addCommand(cmd){
+  const seat=UI.planSeat;
+  if(seatCmds(seat).length>=G.cmdLimit){ flash("Command pad is full"); return; }
+  cmd.seat=seat;
+  const res=applyCmd(PG,cmd);
+  if(!res.ok){ flash("Illegal command"); return; }
+  G.commands.push(cmd);
+  deselect(); renderAll();
+}
+function undoCommand(i){
+  const mine=G.commands.filter(c=>c.seat===UI.planSeat);
+  const cmd=mine[i];
+  G.commands=G.commands.filter(c=>c!==cmd);
+  // rebuild the planning state by replaying; drop any commands the undo orphaned
+  PG=clone(G); // G is the round-start state
+  const dead=[];
+  for(const c of G.commands.filter(c=>c.seat===UI.planSeat)){
+    if(!applyCmd(PG,c).ok) dead.push(c);
+  }
+  if(dead.length) G.commands=G.commands.filter(c=>!dead.includes(c));
+  deselect(); renderAll();
+}
+
+/* ---------------- round execution ---------------- */
+const sleep=ms=>new Promise(r=>setTimeout(r,ms/UI.speed));
+function log(msg,cls){ G.log.unshift({msg,cls}); const el=document.getElementById("log");
+  el.innerHTML=G.log.slice(0,120).map(l=>`<div class="r ${l.cls||""}">${l.msg}</div>`).join(""); }
+
+async function executeRound(){
+  UI.mode="exec"; deselect(); renderAll();
+  bigMsg(`Round ${G.round} — Execution`);
+  log(`<span class="imp">— Round ${G.round}: commands execute —</span>`);
+  // mercenary command conflicts (3-player rule): different orders for same piece cancel out
+  if(G.mode===3){
+    const merc=G.commands.filter(c=>c.army===3);
+    const byPid={};
+    merc.forEach(c=>{ if(c.pid){ (byPid[c.pid]=byPid[c.pid]||[]).push(c); } });
+    for(const pid in byPid){
+      const list=byPid[pid];
+      const seatsInvolved=new Set(list.map(c=>c.seat));
+      if(seatsInvolved.size>1){
+        const sig=c=>c.kind+"|"+c.to;
+        const allSame=list.every(c=>sig(c)===sig(list[0]));
+        if(allSame){ list.slice(1).forEach(c=>c.cancelled=true); }
+        else list.forEach(c=>c.cancelled=true);
+        if(!allSame) log(`Mercenary orders clash — piece stays put`,"bad");
+      }
+    }
+  }
+  // order: official's seat first, then clockwise
+  const order=alivePlanSeats();
+  const ordered=[];
+  for(const s of order) ordered.push(...G.commands.filter(c=>c.seat===s));
+  // apply
+  const acted=new Set();
+  for(const cmd of ordered){
+    if(cmd.cancelled){ log(`✗ ${ARMIES[cmd.army].name}: ${notation(cmd)} (cancelled)`,"bad"); continue; }
+    const res=applyCmd(G,cmd);
+    if(!res.ok){ log(`✗ ${ARMIES[cmd.army].name}: ${notation(cmd)} (illegal — lost)`,"bad"); continue; }
+    acted.add(cmd.army);
+    log(`${ARMIES[cmd.army].name}: ${notation(cmd)}`);
+    renderPieces(G); await sleep(420);
+  }
+  // armies with no (valid) commands pay the penalty
+  for(const army of G.armies){
+    if(!army.alive||army.seat===-1) continue;
+    if(!acted.has(army.idx)) penalize(army.idx);
+  }
+  // megamissile detonation (simultaneous)
+  const launched=G.pieces.filter(p=>p.t==="M"&&p.launchTarget);
+  if(launched.length){
+    await sleep(150);
+    for(const m of launched) await animateMissile(m);
+    const targets=new Set(launched.map(m=>m.launchTarget));
+    for(const tgt of targets){
+      const destroyed=G.pieces.filter(p=>p.a===tgt&&p.t!=="FLAG");
+      G.pieces=G.pieces.filter(p=>!(p.a===tgt&&p.t!=="FLAG"));
+      await boomAt(tgt);
+      log(`<span class="imp">☢ Megamissile hits ${tgt} — ${destroyed.length} piece(s) destroyed</span>`);
+    }
+    G.pieces=G.pieces.filter(p=>!(p.t==="M"&&p.launchTarget)); // launched missiles are spent
+    renderPieces(G); await sleep(400);
+  }
+  // combat
+  await resolveAllCombat();
+  // power points
+  distributePP();
+  // flags
+  await resolveFlags();
+  renderPieces(G); renderChips();
+  // win?
+  const aliveSeats=G.seats.filter(s=>s.alive);
+  if(aliveSeats.length<=1){ gameOver(aliveSeats[0]||null); return; }
+  // next round
+  for(const p of G.pieces){ p.moved=false; p.exch=false; p.retreated=false; p.origin=p.a; }
+  G.commands=[]; G.round++;
+  do{ G.official=(G.official+1)%G.seats.length; }while(!G.seats[G.official].alive);
+  startPlanning();
+}
+
+function penalize(ai){
+  const army=G.armies[ai];
+  if(army.pp>0){ army.pp--; log(`${ARMIES[ai].name} issued no commands — forfeits 1 Power Unit`,"bad"); return; }
+  const owned=armyPieces(G,ai).filter(p=>p.t!=="M");
+  if(!owned.length) return;
+  owned.sort((a,b)=>TYPES[a.t].str-TYPES[b.t].str);
+  const low=owned[0];
+  G.pieces=G.pieces.filter(p=>p!==low);
+  army.pp=Math.min(MAXPP,army.pp+TYPES[low.t].str-1);
+  log(`${ARMIES[ai].name} issued no commands — ${TYPES[low.t].name} liquidated for the fine`,"bad");
+}
+
+function contested(st,excludeHQ){
+  const map={};
+  for(const p of st.pieces){ if(p.t==="FLAG") continue; (map[p.a]=map[p.a]||new Set()).add(controllerKey(p.o)); }
+  return Object.keys(map).filter(aid=>map[aid].size>1)
+    .filter(aid=>excludeHQ? areas[aid].kind!=="hq" : true);
+}
+async function resolveAllCombat(){
+  const standoff=new Set();
+  for(let guard=0;guard<60;guard++){
+    let zones=contested(G,true).filter(a=>!standoff.has(a));
+    if(!zones.length) zones=contested(G,false).filter(a=>!standoff.has(a)&&areas[a].kind==="hq");
+    if(!zones.length) break;
+    const aid=zones[0];
+    await combatAt(aid,standoff);
+  }
+}
+function controllerKey(ai){ const s=G.armies[ai].seat; return s>=0?"s"+s:"m"+ai; }
+function controllerName(key){ return key[0]==="s"?G.seats[+key.slice(1)].name:"Mercenaries"; }
+async function combatAt(aid,standoff){
+  hlCombat(aid,true); await sleep(550);
+  const here=piecesIn(G,aid).filter(p=>p.t!=="FLAG");
+  // forces group by controller: in the 2-player game your two colours fight combined
+  const byCtl={};
+  here.forEach(p=>{(byCtl[controllerKey(p.o)]=byCtl[controllerKey(p.o)]||[]).push(p);});
+  const strengths=Object.entries(byCtl).map(([k,ps])=>({k, s:ps.reduce((t,p)=>t+TYPES[p.t].str,0), ps}));
+  strengths.sort((a,b)=>b.s-a.s);
+  const top=strengths[0], tied=strengths.filter(x=>x.s===top.s);
+  if(tied.length===1){
+    // winner captures every other force in the sector; spoils go to the colour
+    // that contributed the most power (official 2-player rule: no splitting)
+    const byArmyStr={};
+    top.ps.forEach(p=>byArmyStr[p.o]=(byArmyStr[p.o]||0)+TYPES[p.t].str);
+    const winArmy=+Object.keys(byArmyStr).sort((a,b)=>byArmyStr[b]-byArmyStr[a])[0];
+    const losers=strengths.slice(1);
+    for(const L of losers) await capture(winArmy, L.ps, aid);
+    log(`<span class="imp">⚔ ${areaName(aid)}: ${controllerName(top.k)} (${top.s}) wins — captures ${losers.map(l=>controllerName(l.k)+" ("+l.s+")").join(", ")}</span>`);
+  }else{
+    // tie among the strongest: their moved pieces bounce back
+    let any=false;
+    for(const T of tied){
+      for(const p of T.ps){
+        if(p.moved&&!p.retreated&&areas[p.origin].kind!=="reserve"){ p.a=p.origin; p.retreated=true; any=true; }
+      }
+    }
+    if(any){ log(`⚔ ${areaName(aid)}: tie at ${top.s} — attackers bounce back`); renderPieces(G); await sleep(550); }
+    else { standoff.add(aid); log(`⚔ ${areaName(aid)}: stand-off at ${top.s} — nobody yields`); }
+  }
+  hlCombat(aid,false);
+}
+async function capture(winner,pieces,aid){
+  // captured pieces convert to the winner's colour (limited by remaining stock) and go to his reserve
+  for(const p of pieces){
+    const idx=G.pieces.indexOf(p); if(idx<0) continue;
+    if(p.t==="FLAG") continue;
+    await flyPiece(p, rvOf(winner));
+    G.pieces.splice(G.pieces.indexOf(p),1);
+    if(stockLeft(G,winner,p.t)>0){
+      const np=mkPiece(p.t,winner,rvOf(winner)); np.moved=true; G.pieces.push(np);
+    } else log(`${ARMIES[winner].name} has no spare ${TYPES[p.t].name} pieces — captured unit is lost`,"bad");
+  }
+  renderPieces(G);
+}
+function distributePP(){
+  for(const army of G.armies){
+    if(!army.alive) continue;
+    const occ=new Set();
+    for(const p of G.pieces){
+      if(p.o!==army.idx||p.t==="FLAG") continue;
+      const c=countryOf(p.a);
+      if(c!==null&&c!==army.idx&&G.armies[c].alive) occ.add(c);
+    }
+    const gain=Math.min(occ.size,PPCAP_PER_ROUND);
+    if(gain>0){
+      const real=Math.min(gain,MAXPP-army.pp);
+      army.pp+=real;
+      log(`⚡ ${ARMIES[army.idx].name} collects ${real} Power Unit${real!==1?"s":""} (occupying ${[...occ].map(c=>ARMIES[c].name).join(", ")})`);
+    }
+  }
+}
+async function resolveFlags(){
+  // a flag falls when an enemy force containing infantry/regiment holds the HQ
+  const events=[];
+  for(const army of G.armies){
+    if(!army.alive) continue;
+    const hq=hqOf(army.idx);
+    const occupants=piecesIn(G,hq).filter(p=>p.t!=="FLAG");
+    const myKey=controllerKey(army.idx);
+    const enemies=occupants.filter(p=>controllerKey(p.o)!==myKey);
+    const friends=occupants.filter(p=>controllerKey(p.o)===myKey);
+    if(!enemies.length||friends.length) continue;          // combat already decided occupancy
+    const ctls=new Set(enemies.map(p=>controllerKey(p.o)));
+    if(ctls.size!==1) continue;                            // two rivals in the HQ: nobody takes the flag
+    if(!enemies.some(p=>p.t==="I"||p.t==="R")) continue;   // no infantry, no capture
+    // spoils go to the colour with the most power in the HQ
+    const byArmyStr={};
+    enemies.forEach(p=>byArmyStr[p.o]=(byArmyStr[p.o]||0)+TYPES[p.t].str);
+    const att=+Object.keys(byArmyStr).sort((a,b)=>byArmyStr[b]-byArmyStr[a])[0];
+    events.push({captor:att,victim:army.idx});
+  }
+  if(!events.length) return;
+  // mutual captures: both armies fall; chains: spoils flow to the final captor
+  const victimOf={}; events.forEach(e=>victimOf[e.victim]=e.captor);
+  for(const e of events){
+    let cap=e.captor; const seen=new Set([e.victim]);
+    while(victimOf[cap]!==undefined&&!seen.has(cap)){ seen.add(cap); cap=victimOf[cap]; }
+    e.finalCaptor = victimOf[cap]!==undefined ? null : cap;   // null = mutual destruction
+  }
+  for(const e of events){
+    const v=G.armies[e.victim];
+    v.alive=false;
+    bigMsg(`${ARMIES[e.victim].name} flag captured!`);
+    await sleep(900);
+    const vp=G.pieces.filter(p=>p.o===e.victim);
+    if(e.finalCaptor!==null&&G.armies[e.finalCaptor]){
+      const w=e.finalCaptor;
+      log(`<span class="imp">🏳 ${ARMIES[w].name} captures the ${ARMIES[e.victim].name} flag — absorbs all forces & Power Units!</span>`);
+      G.armies[w].pp=Math.min(MAXPP,G.armies[w].pp+v.pp); v.pp=0;
+      for(const p of vp){
+        G.pieces.splice(G.pieces.indexOf(p),1);
+        if(p.t==="FLAG") continue;
+        if(stockLeft(G,w,p.t)>0){ const np=mkPiece(p.t,w,rvOf(w)); np.moved=true; G.pieces.push(np); }
+      }
+    }else{
+      log(`<span class="imp">🏳 ${ARMIES[e.victim].name} falls in mutual destruction — forces removed</span>`);
+      for(const p of vp) G.pieces.splice(G.pieces.indexOf(p),1);
+    }
+    renderPieces(G);
+  }
+  // seats die when all their armies are gone
+  for(const s of G.seats) s.alive=s.armies.some(a=>G.armies[a].alive);
+}
+
+function gameOver(seat){
+  G.over=true; UI.mode="over";
+  showPanel(`
+    <h1>POWER</h1>
+    <h2 style="font-size:24px;color:#fff;">${seat?seat.name+" conquers the world!":"Mutual annihilation — nobody wins"}</h2>
+    <p style="margin:10px 0;">${seat?`The last flag has fallen. Total domination in ${G.round} rounds.`:""}</p>
+    <button class="btn primary" onclick="location.reload()">Play again</button>`);
+}
+function tournamentScore(){
+  const rows=G.seats.map(s=>{
+    let total=0;
+    for(const ai of s.armies){
+      if(!G.armies[ai].alive) continue;
+      total+=G.armies[ai].pp;
+      for(const p of armyPieces(G,ai)) total+=TYPES[p.t].str;
+    }
+    return {name:s.name,total,alive:s.alive};
+  }).sort((a,b)=>b.total-a.total);
+  showPanel(`<h1>Final score</h1>
+    <p>Tournament rule: highest total power value (pieces + Power Units) wins.</p>
+    <table class="ref"><tr><th>Player</th><th>Total power</th></tr>
+    ${rows.map((r,i)=>`<tr><td>${i===0?"🏆 ":""}${r.name}${r.alive?"":" (eliminated)"}</td><td>${r.total}</td></tr>`).join("")}</table>
+    <button class="btn" onclick="hidePanel()">Back</button>
+    <button class="btn primary" onclick="location.reload()">New game</button>`);
+}
+
+/* ---------------- planning flow ---------------- */
+function startPlanning(){
+  UI.mode="pass";
+  UI.planOrder=alivePlanSeats();
+  UI.planIdx=0;
+  renderAll();
+  passScreen();
+}
+function passScreen(){
+  const seat=UI.planOrder[UI.planIdx];
+  const s=G.seats[seat];
+  const isOff=seat===G.official;
+  showPanel(`
+    <h1>POWER</h1>
+    <p class="mini" style="margin-top:6px;">Round ${G.round} · pass the device — no peeking!</p>
+    <div class="passname" style="color:${ARMIES[s.armies[0]].hex==="#2b2b30"?"#9aa":ARMIES[s.armies[0]].hex};">${s.name}${isOff?" — Official":""}</div>
+    <p>Plan up to <b>${G.cmdLimit}</b> commands${G.useTimer?` in <b>${G.planTime/60} minutes</b>`:""}.
+       Your orders stay hidden until everyone has planned.</p>
+    <p class="mini" style="margin:8px 0;">Armies: ${s.armies.map(a=>ARMIES[a].name).join(" + ")}${G.mode===3?" (anyone may also command the Black mercenaries)":""}</p>
+    <button class="btn primary" id="beginplan">Begin planning</button>`);
+  document.getElementById("beginplan").onclick=()=>{
+    hidePanel();
+    UI.mode="plan"; UI.planSeat=seat;
+    PG=clone(G);
+    for(const c of G.commands.filter(c=>c.seat===seat)) applyCmd(PG,c);
+    if(G.useTimer) startTimer();
+    renderAll();
+  };
+}
+function donePlanning(){
+  stopTimer();
+  deselect();
+  UI.planIdx++;
+  if(UI.planIdx<UI.planOrder.length){ UI.mode="pass"; PG=null; renderAll(); passScreen(); }
+  else { PG=null; executeRound(); }
+}
+function startTimer(){
+  UI.timeLeft=G.planTime;
+  const el=document.getElementById("timer");
+  const tick=()=>{
+    el.textContent=Math.floor(UI.timeLeft/60)+":"+String(UI.timeLeft%60).padStart(2,"0");
+    el.classList.toggle("low",UI.timeLeft<=30);
+    if(UI.timeLeft<=0){ stopTimer(); flash("Time! Pencils down."); donePlanning(); return; }
+    UI.timeLeft--;
+  };
+  tick(); UI.timerId=setInterval(tick,1000);
+}
+function stopTimer(){ clearInterval(UI.timerId); UI.timerId=null; document.getElementById("timer").textContent=""; }
+
+/* ---------------- selection & input ---------------- */
+function curState(){ return UI.mode==="plan"&&PG?PG:G; }
+function myArmies(){ const s=G.seats[UI.planSeat]; const a=s?s.armies.slice():[];
+  if(G.mode===3&&UI.mode==="plan") a.push(3); return a; }
+function deselect(){ UI.sel=null; UI.hls=[]; }
+function clickArea(aid){
+  if(UI.mode!=="plan"&&UI.mode!=="exec"&&UI.mode!=="over"){ return; }
+  const st=curState();
+  if(UI.sel&&UI.hls.includes(aid)){
+    const p=st.pieces.find(x=>x.id===UI.sel);
+    const cmd={kind:p.t==="M"?"launch":"move", army:p.o, pid:p.id, t:p.t, from:p.a, to:aid};
+    addCommand(cmd); return;
+  }
+  deselect();
+  UI.inspect=aid;
+  renderAll();
+}
+function clickPiece(pid){
+  if(UI.mode!=="plan") { const p=curState().pieces.find(x=>x.id===pid); if(p){UI.inspect=p.a; renderAll();} return; }
+  const st=curState();
+  const p=st.pieces.find(x=>x.id===pid);
+  if(!p) return;
+  if(!myArmies().includes(p.o)||p.t==="FLAG"){ UI.inspect=p.a; deselect(); renderAll(); return; }
+  if(UI.sel===pid){ deselect(); renderAll(); return; }
+  const dests=legalDests(st,p);
+  if(!dests.length){ flash(p.moved||p.exch?"That piece has already acted this round":"No legal moves"); UI.inspect=p.a; deselect(); renderAll(); return; }
+  UI.sel=pid; UI.hls=dests; UI.inspect=p.a;
+  renderAll();
+}
+
+/* ---------------- rendering ---------------- */
+const svg=document.getElementById("board");
+const SVGNS="http://www.w3.org/2000/svg";
+function el(tag,attrs,parent){ const e=document.createElementNS(SVGNS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
+
+function drawBoard(){
+  svg.innerHTML="";
+  const defs=el("defs",{});
+  defs.innerHTML=`
+   <pattern id="waves" width="46" height="26" patternUnits="userSpaceOnUse">
+     <path d="M0 13 q 6 -7 12 0 t 12 0 t 12 0 t 12 0" stroke="#ffffff33" fill="none" stroke-width="2"/>
+   </pattern>
+   <pattern id="terrain" width="60" height="60" patternUnits="userSpaceOnUse">
+     <rect width="60" height="60" fill="#7a9e56"/>
+     <circle cx="14" cy="18" r="7" fill="#71924f"/><circle cx="44" cy="40" r="9" fill="#83a85f"/>
+     <circle cx="30" cy="55" r="5" fill="#6f9050"/><circle cx="52" cy="10" r="5" fill="#8aa86a"/>
+   </pattern>
+   <radialGradient id="boomg"><stop offset="0%" stop-color="#fff8c8"/><stop offset="35%" stop-color="#ffb300"/><stop offset="75%" stop-color="#e23c0e"/><stop offset="100%" stop-color="#e23c0e" stop-opacity="0"/></radialGradient>
+   <g id="g-I"><circle cy="-7" r="4.4"/><path d="M-4 -1 h8 l1.4 9 a2 2 0 0 1 -2 2 h-6.8 a2 2 0 0 1 -2 -2 z"/></g>
+   <g id="g-R"><g transform="translate(-9,0) scale(.78)"><circle cy="-7" r="4.4"/><path d="M-4 -1 h8 l1.4 9a2 2 0 0 1 -2 2h-6.8a2 2 0 0 1 -2 -2z"/></g>
+              <g transform="scale(.9)"><circle cy="-7" r="4.4"/><path d="M-4 -1 h8 l1.4 9a2 2 0 0 1 -2 2h-6.8a2 2 0 0 1 -2 -2z"/></g>
+              <g transform="translate(9,0) scale(.78)"><circle cy="-7" r="4.4"/><path d="M-4 -1 h8 l1.4 9a2 2 0 0 1 -2 2h-6.8a2 2 0 0 1 -2 -2z"/></g></g>
+   <g id="g-T"><rect x="-9" y="-4" width="18" height="10" rx="3"/><rect x="-3.5" y="-7" width="7" height="6" rx="2"/><rect x="-1.2" y="-13" width="2.4" height="7" rx="1"/></g>
+   <g id="g-H"><rect x="-12" y="-5" width="24" height="12" rx="3.5"/><rect x="-5" y="-9" width="10" height="7" rx="2"/><rect x="-3.6" y="-16" width="2.6" height="8" rx="1"/><rect x="1" y="-16" width="2.6" height="8" rx="1"/></g>
+   <g id="g-F"><path d="M0 -11 L8 7 L0 3 L-8 7 Z"/></g>
+   <g id="g-B"><path d="M-1.8 -12 h3.6 v6 l12 5 v3.4 l-12 -2 v6 l4 3 v2.6 l-5.8 -1.4 -5.8 1.4 v-2.6 l4 -3 v-6 l-12 2 v-3.4 l12 -5 z"/></g>
+   <g id="g-D"><path d="M0 -11 L4.5 -4 V8 a2 2 0 0 1 -2 2 h-5 a2 2 0 0 1 -2 -2 V-4 Z"/><circle cy="-1" r="1.8"/></g>
+   <g id="g-C"><path d="M0 -15 L6 -6 V11 a2.4 2.4 0 0 1 -2.4 2.4 h-7.2 A2.4 2.4 0 0 1 -6 11 V-6 Z"/><circle cy="-5" r="2.2"/><circle cy="3" r="2.2"/></g>
+   <g id="g-M"><path d="M0 -14 C4 -9 4 -2 3 4 h-6 C-4 -2 -4 -9 0 -14 Z"/><path d="M-3 4 l-3.5 6 h3 l2 -3 h3 l2 3 h3 L3 4 Z"/><circle cy="-5" r="1.7" fill="#ffffffaa" stroke="none"/></g>
+   <g id="g-FLAG"><rect x="-1" y="-14" width="2.2" height="26" rx="1"/><path d="M1.2 -14 L14 -9.5 L1.2 -5 Z"/></g>
+   <g id="g-PP"><path d="M2 -12 L-6 2 h5 L-2 12 L7 -3 h-5.4 Z"/></g>`;
+  // outer frame / deep water
+  el("rect",{x:0,y:0,width:SZ,height:SZ,rx:18,fill:"#37607a"});
+  el("rect",{x:8,y:8,width:SZ-16,height:SZ-16,rx:12,fill:"var(--water)"});
+  el("rect",{x:8,y:8,width:SZ-16,height:SZ-16,rx:12,fill:"url(#waves)"});
+  // grid water cells slightly darker (the battle grid zone)
+  el("rect",{x:MG-4,y:MG-4,width:CELL*9+8,height:CELL*9+8,fill:"var(--water2)",stroke:"#33607a","stroke-width":2});
+  el("rect",{x:MG-4,y:MG-4,width:CELL*9+8,height:CELL*9+8,fill:"url(#waves)"});
+  const X=(c)=>MG+c*CELL, Y=(r)=>MG+r*CELL;
+  // countries
+  for(const b of C_BLOCKS){
+    el("rect",{x:X(b.c0)-6,y:Y(b.r0)-6,width:CELL*3+12,height:CELL*3+12,rx:10,fill:"#5b7a40"});
+    el("rect",{x:X(b.c0)-2,y:Y(b.r0)-2,width:CELL*3+4,height:CELL*3+4,rx:7,fill:"url(#terrain)",stroke:ARMIES[b.army].hex,"stroke-width":3});
+  }
+  // islands
+  for(const iid of ["NI","EI","SI","WI","XI"]){
+    const a=areas[iid];
+    el("ellipse",{cx:a.cx,cy:a.cy,rx:CELL*.46,ry:CELL*.4,fill:"#5b7a40"});
+    el("ellipse",{cx:a.cx,cy:a.cy,rx:CELL*.4,ry:CELL*.34,fill:"url(#terrain)",stroke:"#46612f","stroke-width":2});
+    el("text",{x:a.cx,y:a.cy+4,"text-anchor":"middle",class:"isllbl"}).textContent=iid;
+  }
+  // HQs
+  for(let i=0;i<4;i++){
+    const a=areas[hqOf(i)];
+    el("rect",{x:a.cx-CELL/2+3,y:a.cy-CELL/2+3,width:CELL-6,height:CELL-6,rx:10,
+      fill:ARMIES[i].hex,stroke:"#00000055","stroke-width":2.5});
+    el("text",{x:a.cx,y:a.cy-CELL/2+18,"text-anchor":"middle",fill:ARMIES[i].text,
+      style:"font-size:11px;font-weight:800;letter-spacing:.05em;pointer-events:none;"}).textContent="HQ";
+  }
+  // magenta grid over countries + sector numbers
+  for(const b of C_BLOCKS){
+    for(let i=0;i<=3;i++){
+      el("line",{x1:X(b.c0)+i*CELL,y1:Y(b.r0),x2:X(b.c0)+i*CELL,y2:Y(b.r0)+3*CELL,stroke:"var(--grid)","stroke-width":2,opacity:.85});
+      el("line",{x1:X(b.c0),y1:Y(b.r0)+i*CELL,x2:X(b.c0)+3*CELL,y2:Y(b.r0)+i*CELL,stroke:"var(--grid)","stroke-width":2,opacity:.85});
+    }
+    for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+      const idx=b.idx(r,c);
+      el("text",{x:X(b.c0+c)+8,y:Y(b.r0+r)+19,class:"sectorlbl",fill:ARMIES[b.army].hex,
+        stroke:"#00000040","stroke-width":.5}).textContent=ARMIES[b.army].key+idx;
+    }
+  }
+  // sea lane labels + faint lane separators
+  for(const [id] of LANES){
+    const a=areas[id];
+    el("text",{x:a.cx,y:a.cy+5,"text-anchor":"middle",class:"lanelbl"}).textContent=id;
+    for(const [r,c] of a.cells)
+      el("rect",{x:X(c)+2,y:Y(r)+2,width:CELL-4,height:CELL-4,rx:6,fill:"none",stroke:"#ffffff2e","stroke-width":1.5,"stroke-dasharray":"5 5"});
+  }
+  // reserve trays
+  for(let i=0;i<4;i++){
+    const t=areas[rvOf(i)].tray;
+    el("rect",{x:t.x,y:t.y,width:t.w,height:t.h,rx:10,fill:"var(--paper)",stroke:ARMIES[i].hex,"stroke-width":3});
+    const lx=t.vert? t.x+t.w/2 : t.x+10, ly=t.vert? t.y+12 : t.y+15;
+    const txt=el("text",{x:lx,y:ly,fill:"#6b5b39",style:"font-size:11px;font-weight:800;letter-spacing:.18em;pointer-events:none;"});
+    txt.textContent="RESERVE";
+    if(t.vert){ txt.setAttribute("text-anchor","middle"); txt.setAttribute("transform",`rotate(90 ${lx} ${ly})`);
+      txt.setAttribute("x",lx); txt.setAttribute("y",ly); txt.setAttribute("transform",`rotate(90 ${t.x+t.w/2} ${t.y+40})`);
+      txt.setAttribute("x",t.x+t.w/2); txt.setAttribute("y",t.y+44); txt.setAttribute("text-anchor","middle"); txt.removeAttribute("transform"); txt.textContent="RV"; }
+    // PP counter
+    const px=t.vert? t.x+t.w/2 : t.x+t.w-44, py=t.vert? t.y+t.h-30 : t.y+15;
+    const g=el("g",{id:"pp-"+i,style:"pointer-events:none;"});
+    el("use",{href:"#g-PP",x:0,y:0,transform:`translate(${px},${py-4}) scale(.8)`,fill:"#e0a818",stroke:"#6b5800","stroke-width":1},g);
+    el("text",{x:px+12,y:py,fill:"#3a3000",style:"font-size:14px;font-weight:800;",id:"pptxt-"+i},g).textContent="0";
+  }
+  // corner title
+  el("text",{x:SZ/2,y:SZ-22,"text-anchor":"middle",fill:"#ffffff88",
+    style:"font-size:17px;font-weight:900;font-style:italic;letter-spacing:.3em;pointer-events:none;"}).textContent="P O W E R";
+  el("text",{x:SZ/2,y:30,"text-anchor":"middle",fill:"#ffffff66",
+    style:"font-size:11px;letter-spacing:.22em;pointer-events:none;"}).textContent="THE   BOARD   GAME";
+  // clickable overlays
+  const ovg=el("g",{id:"ovs"});
+  for(const id of allIds){
+    const a=areas[id];
+    if(a.kind==="reserve"){
+      const t=a.tray;
+      el("rect",{x:t.x,y:t.y,width:t.w,height:t.h,rx:10,class:"areaov","data-area":id},ovg);
+    }else{
+      for(const [r,c] of a.cells)
+        el("rect",{x:X(c),y:Y(r),width:CELL,height:CELL,class:"areaov","data-area":id},ovg);
+    }
+  }
+  el("g",{id:"pieces"});
+  el("g",{id:"fx"});
+  svg.addEventListener("click",e=>{
+    const ov=e.target.closest(".areaov");
+    if(ov){ clickArea(ov.getAttribute("data-area")); return; }
+    const pc=e.target.closest(".piece");
+    if(pc){ clickPiece(+pc.getAttribute("data-pid")); return; }
+    deselect(); renderAll();
+  });
+}
+
+function slotFor(st,p,i,n){
+  const a=areas[p.a];
+  if(a.kind==="reserve"){
+    const t=a.tray, pad=26, per=t.vert?Math.max(1,Math.floor((t.h-70)/30)):Math.max(1,Math.floor((t.w-80)/30));
+    const row=Math.floor(i/per), col=i%per;
+    if(t.vert) return [t.x+t.w/2-14+row*26, t.y+58+col*30];
+    return [t.x+34+col*30, t.y+t.h/2-12+row*26+6];
+  }
+  if(a.kind==="lane"){
+    const cell=a.cells[i%3], k=Math.floor(i/3);
+    return [MG+cell[1]*CELL+CELL/2+(k%2?14:-6)*(k?1:0), MG+cell[0]*CELL+CELL/2+(k>1?16:0)];
+  }
+  // single-cell areas: ring layout
+  const cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols);
+  const col=i%cols,row=Math.floor(i/cols);
+  const w=CELL-22, h=CELL-22;
+  const ox=cols===1?0:(col/(cols-1)-.5)*w;
+  const oy=rows===1?0:(row/(rows-1)-.5)*h;
+  return [a.cx+ox, a.cy+oy+(a.kind==="hq"?6:0)];
+}
+function renderPieces(st){
+  const layer=document.getElementById("pieces");
+  const wanted=new Set();
+  const groups={};
+  for(const p of st.pieces){ (groups[p.a]=groups[p.a]||[]).push(p); }
+  for(const aid in groups){
+    groups[aid].sort((x,y)=>x.o-y.o||x.id-y.id);
+    const n=groups[aid].length;
+    groups[aid].forEach((p,i)=>{
+      wanted.add("pc-"+p.id);
+      let g=document.getElementById("pc-"+p.id);
+      const [x,y]=slotFor(st,p,i,n);
+      const scale=(["R","H","B","C","M","FLAG"].includes(p.t)?1.0:0.8)*(n>6?0.62:n>4?0.74:1);
+      if(!g){
+        g=el("g",{id:"pc-"+p.id,class:"piece ghost","data-pid":p.id},layer);
+        const ring=el("circle",{class:"ring",r:17},g);
+        el("use",{href:"#g-"+p.t,fill:ARMIES[p.o].hex,stroke:ARMIES[p.o].stroke,"stroke-width":1.4},g);
+        g.getBoundingClientRect(); // force layout so the pop-in transition runs
+      }
+      const mine=UI.mode==="plan"&&myArmies().includes(p.o)&&p.t!=="FLAG";
+      g.setAttribute("class","piece"+(mine?" own":"")+(UI.sel===p.id?" selp":""));
+      g.style.transform=`translate(${x}px,${y}px) scale(${scale})`;
+      const u=g.querySelector("use");
+      u.setAttribute("href","#g-"+p.t);
+      u.setAttribute("fill",ARMIES[p.o].hex);
+      u.setAttribute("stroke",ARMIES[p.o].stroke);
+      g.style.opacity = (p.t==="M"&&p.launchTarget)?0.45:1;
+    });
+  }
+  [...layer.children].forEach(c=>{ if(!wanted.has(c.id)) c.remove(); });
+  // pp counters
+  for(let i=0;i<4;i++){ const t=document.getElementById("pptxt-"+i); if(t) t.textContent="× "+st.armies[i].pp; }
+  // overlays
+  document.querySelectorAll(".areaov").forEach(o=>{
+    const aid=o.getAttribute("data-area");
+    o.classList.toggle("hl",UI.hls.includes(aid));
+    o.classList.toggle("sel",UI.inspect===aid&&!UI.hls.includes(aid));
+  });
+}
+function hlCombat(aid,on){
+  document.querySelectorAll(`.areaov[data-area="${aid}"]`).forEach(o=>o.classList.toggle("combat",on));
+}
+async function flyPiece(p,toAid){
+  const g=document.getElementById("pc-"+p.id);
+  if(!g) return;
+  const a=areas[toAid];
+  g.classList.add("flying");
+  g.style.transform=`translate(${a.cx}px,${a.cy}px) scale(.6)`;
+  await sleep(620);
+  g.classList.remove("flying");
+}
+async function animateMissile(m){
+  const from=areas[m.a], to=areas[m.launchTarget];
+  const fx=document.getElementById("fx");
+  const tr=el("line",{x1:from.cx,y1:from.cy,x2:from.cx,y2:from.cy,stroke:"#ff5722","stroke-width":4,"stroke-linecap":"round",class:"boom"},fx);
+  const ms=el("use",{href:"#g-M",fill:"#ddd",stroke:"#333",class:"boom"},fx);
+  const t0=performance.now(), dur=900/UI.speed;
+  await new Promise(res=>{
+    const step=now=>{
+      const t=Math.min(1,(now-t0)/dur);
+      const x=from.cx+(to.cx-from.cx)*t, y=from.cy+(to.cy-from.cy)*t - Math.sin(t*Math.PI)*120;
+      const ang=Math.atan2(to.cy-from.cy,to.cx-from.cx)*180/Math.PI+90;
+      ms.setAttribute("transform",`translate(${x},${y}) rotate(${ang}) scale(1.25)`);
+      tr.setAttribute("x2",x); tr.setAttribute("y2",y);
+      if(t<1) requestAnimationFrame(step); else res();
+    };
+    requestAnimationFrame(step);
+  });
+  tr.remove(); ms.remove();
+}
+async function boomAt(aid){
+  const a=areas[aid], fx=document.getElementById("fx");
+  const c=el("circle",{cx:a.cx,cy:a.cy,r:6,fill:"url(#boomg)",class:"boom"},fx);
+  const t0=performance.now(), dur=750/UI.speed;
+  await new Promise(res=>{
+    const step=now=>{
+      const t=Math.min(1,(now-t0)/dur);
+      c.setAttribute("r",6+t*70); c.setAttribute("opacity",1-t);
+      if(t<1) requestAnimationFrame(step); else res();
+    };
+    requestAnimationFrame(step);
+  });
+  c.remove();
+}
+
+/* ---------------- sidebar ---------------- */
+function areaName(aid){
+  const a=areas[aid];
+  if(a.kind==="sector") return `${ARMIES[a.army].name} sector ${ARMIES[a.army].key}${a.sec}`;
+  if(a.kind==="hq") return `${ARMIES[a.army].name} HQ`;
+  if(a.kind==="reserve") return `${ARMIES[a.army].name} reserve`;
+  if(a.kind==="island") return {NI:"North Island",EI:"East Island",SI:"South Island",WI:"West Island",XI:"X Island"}[aid];
+  return "Sea lane "+aid;
+}
+function renderChips(){
+  const box=document.getElementById("chips");
+  box.innerHTML=G.armies.map(a=>{
+    const seat=a.seat>=0?G.seats[a.seat]:null;
+    const me=UI.mode==="plan"&&myArmies().includes(a.idx);
+    const cnt=armyPieces(G,a.idx).length;
+    return `<div class="chip ${a.alive?"":"dead"} ${me?"me":""}">
+      <span class="dot" style="background:${ARMIES[a.idx].hex}"></span>
+      <span>${ARMIES[a.idx].name}${a.seat===-1?" (merc)":seat&&seat.name!==ARMIES[a.idx].name?" · "+seat.name:""}</span>
+      <span class="pp">⚡${a.pp} · ${cnt}</span></div>`;
+  }).join("");
+}
+function renderPad(){
+  const card=document.getElementById("padcard");
+  if(UI.mode!=="plan"){ card.style.display=UI.mode==="exec"?"block":"none"; }
+  else card.style.display="block";
+  if(UI.mode==="plan"){
+    const mine=seatCmds(UI.planSeat);
+    document.getElementById("padowner").textContent=G.seats[UI.planSeat].name.toUpperCase();
+    document.getElementById("cmdcount").textContent=mine.length+" / "+G.cmdLimit;
+    document.getElementById("cmdlist").innerHTML =
+      Array.from({length:G.cmdLimit},(_,i)=>{
+        const c=mine[i];
+        return `<li>${c?`<span>${i+1}. ${notation(c)}</span><span class="x" data-undo="${i}" title="undo">✕</span>`:`<span style="opacity:.35">${i+1}.</span>`}</li>`;
+      }).join("");
+    document.querySelectorAll("#cmdlist .x").forEach(x=>x.onclick=e=>{e.stopPropagation(); undoCommand(+x.getAttribute("data-undo"));});
+    document.getElementById("donebtn").style.display="inline-block";
+    document.getElementById("donebtn").textContent = UI.planIdx<UI.planOrder.length-1 ? "Done — pass the device ➜" : "Done — execute the round ⚔";
+  } else if(UI.mode==="exec"){
+    document.getElementById("padowner").textContent="EXECUTING";
+    document.getElementById("donebtn").style.display="none";
+  }
+}
+function renderInspector(){
+  const box=document.getElementById("inspector");
+  const title=document.getElementById("insptitle");
+  const st=curState();
+  if(!UI.inspect){ title.textContent="Inspector"; box.innerHTML=`<span class="mini">Click any sector, island, sea lane, HQ or reserve to inspect it. Click one of your pieces, then a glowing square, to move it.</span>`; return; }
+  const aid=UI.inspect, a=areas[aid];
+  title.textContent=areaName(aid);
+  const ps=piecesIn(st,aid);
+  let html="";
+  if(!ps.length) html+=`<div class="mini">Empty.</div>`;
+  const byo={};
+  ps.forEach(p=>{(byo[p.o]=byo[p.o]||[]).push(p);});
+  for(const o in byo){
+    const tot=byo[o].reduce((s,p)=>s+TYPES[p.t].str,0);
+    html+=`<div class="grp"><div class="grphead"><span class="dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${ARMIES[o].hex}"></span>
+      ${ARMIES[o].name} — power ${tot}</div>`;
+    for(const p of byo[o]){
+      const own=UI.mode==="plan"&&myArmies().includes(p.o)&&p.t!=="FLAG";
+      html+=`<div class="rowpiece" ${own?`data-selp="${p.id}" style="cursor:pointer"`:""}>
+        <svg width="22" height="22" viewBox="-16 -16 32 32"><use href="#g-${p.t}" fill="${ARMIES[p.o].hex}" stroke="${ARMIES[p.o].stroke}" stroke-width="1.5"/></svg>
+        ${TYPES[p.t].name} <span class="mini">(pwr ${TYPES[p.t].str}${TYPES[p.t].mv?", mv "+TYPES[p.t].mv:""})</span>
+        ${p.moved?'<span class="mini">· moved</span>':p.exch?'<span class="mini">· new</span>':""}
+        ${own&&!p.moved?`<button class="btn small" style="margin-left:auto" data-selp="${p.id}">${p.t==="M"?"Launch":"Move"}</button>`:""}
+      </div>`;
+    }
+    html+=`</div>`;
+  }
+  // actions for the planning player
+  if(UI.mode==="plan"){
+    for(const ai of myArmies()){
+      const minePs=ps.filter(p=>p.o===ai);
+      // exchanges 3 small -> big
+      for(const t of SMALLS){
+        const cnt=minePs.filter(p=>p.t===t).length;
+        if(cnt>=3&&stockLeft(st,ai,TYPES[t].big)>0)
+          html+=`<button class="btn small" data-x3="${ai}|${t}">⇧ 3 ${TYPES[t].name}s → ${TYPES[TYPES[t].big].name} (${ARMIES[ai].key})</button>`;
+      }
+      // megamissile builder
+      const strHere=minePs.filter(p=>p.t!=="FLAG"&&p.t!=="M").reduce((s,p)=>s+TYPES[p.t].str,0);
+      if(strHere+st.armies[ai].pp>=100&&minePs.some(p=>p.t!=="FLAG"))
+        html+=`<button class="btn small" data-mega="${ai}">☢ Build Megamissile here (${ARMIES[ai].key})</button>`;
+      // reserve: buying
+      if(aid===rvOf(ai)){
+        html+=`<div class="mini" style="margin-top:6px;">Power Units: <b style="color:#ffd567">⚡${st.armies[ai].pp}</b> — buy:</div>`;
+        for(const t of SMALLS){
+          html+=`<button class="btn small" data-buy="${ai}|${t}" ${st.armies[ai].pp<TYPES[t].cost||stockLeft(st,ai,t)<=0?"disabled":""}>${TYPES[t].name} (${TYPES[t].cost}⚡)</button>`;
+        }
+      }
+    }
+  }
+  box.innerHTML=html;
+  box.querySelectorAll("[data-selp]").forEach(b=>b.onclick=e=>{e.stopPropagation(); clickPiece(+b.getAttribute("data-selp"));});
+  box.querySelectorAll("[data-x3]").forEach(b=>b.onclick=()=>{
+    const [ai,t]=b.getAttribute("data-x3").split("|");
+    addCommand({kind:"exch3",army:+ai,t,area:aid});
+  });
+  box.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>{
+    const [ai,t]=b.getAttribute("data-buy").split("|");
+    addCommand({kind:"buy",army:+ai,t});
+  });
+  box.querySelectorAll("[data-mega]").forEach(b=>b.onclick=()=>megaBuilder(+b.getAttribute("data-mega"),aid));
+}
+function megaBuilder(ai,aid){
+  const st=curState();
+  const ps=piecesIn(st,aid).filter(p=>p.o===ai&&p.t!=="FLAG"&&p.t!=="M");
+  let selIds=new Set(ps.map(p=>p.id)), pp=0;
+  const draw=()=>{
+    const tot=ps.filter(p=>selIds.has(p.id)).reduce((s,p)=>s+TYPES[p.t].str,0)+pp;
+    showPanel(`<h1 style="font-size:22px;">☢ Build a Megamissile</h1>
+      <p>Sacrifice pieces in <b>${areaName(aid)}</b> ${aid===rvOf(ai)?"and/or Power Units ":""}totalling <b>100+ power</b>. Overage is lost.</p>
+      <div style="margin:10px 0;">
+      ${ps.map(p=>`<label style="display:flex;align-items:center;gap:8px;margin:2px 0;cursor:pointer;">
+        <input type="checkbox" data-mp="${p.id}" ${selIds.has(p.id)?"checked":""}> ${TYPES[p.t].name} (${TYPES[p.t].str})</label>`).join("")}
+      <label style="display:flex;align-items:center;gap:8px;">Power Units (have ⚡${st.armies[ai].pp}):
+        <input type="number" id="megapp" min="0" max="${st.armies[ai].pp}" value="${pp}" style="width:70px;background:#101822;color:#fff;border:1px solid #3a4f6b;border-radius:6px;padding:4px;"></label>
+      </div>
+      <p style="font-size:18px;">Total: <b style="color:${tot>=100?"#7be07b":"#ff8d7e"}">${tot}</b> / 100</p>
+      <button class="btn primary" id="megago" ${tot>=100?"":"disabled"}>Build it</button>
+      <button class="btn" id="megacancel">Cancel</button>`);
+    document.querySelectorAll("[data-mp]").forEach(cb=>cb.onchange=()=>{ const id=+cb.getAttribute("data-mp"); cb.checked?selIds.add(id):selIds.delete(id); pp=+document.getElementById("megapp").value||0; draw(); });
+    document.getElementById("megapp").onchange=e=>{ pp=Math.max(0,Math.min(st.armies[ai].pp,+e.target.value||0)); draw(); };
+    document.getElementById("megacancel").onclick=hidePanel;
+    document.getElementById("megago").onclick=()=>{
+      hidePanel();
+      addCommand({kind:"mega",army:ai,area:aid,pids:[...selIds],pp,total:tot>=100?tot:100});
+    };
+  };
+  draw();
+}
+
+function renderAll(){
+  document.getElementById("roundbadge").textContent="Round "+G.round;
+  const pb=document.getElementById("phasebadge");
+  pb.textContent = UI.mode==="plan" ? `Planning — ${G.seats[UI.planSeat].name}` :
+                   UI.mode==="exec" ? "Executing" : UI.mode==="pass" ? "Pass the device" :
+                   UI.mode==="over" ? "Game over" : "Setup";
+  renderChips(); renderPad(); renderInspector(); renderPieces(curState());
+}
+
+/* ---------------- overlays ---------------- */
+function showPanel(html){ document.getElementById("overlaypanel").innerHTML=html; document.getElementById("overlay").classList.remove("hidden"); }
+function hidePanel(){ document.getElementById("overlay").classList.add("hidden"); }
+function bigMsg(t){ const b=document.getElementById("bigmsg"); b.textContent=t; b.classList.add("show"); setTimeout(()=>b.classList.remove("show"),1600/UI.speed); }
+let flashT=null;
+function flash(t){ const b=document.getElementById("bigmsg"); b.textContent=t; b.classList.add("show"); clearTimeout(flashT); flashT=setTimeout(()=>b.classList.remove("show"),1200); }
+
+function rulesPanel(){
+  showPanel(`<h1 style="font-size:22px;">How POWER plays</h1>
+  <h2>Object</h2><p>Eliminate your opponents by occupying their HQ and capturing their flag <b>with Infantry or a Regiment</b>. Last flag standing wins.</p>
+  <h2>Each round</h2>
+  <ul><li>Every player secretly plans up to <b>5 commands</b> (3-minute timer in the original). A command = move one piece, or make one exchange.</li>
+  <li>All commands then execute <b>simultaneously</b>. Illegal commands are simply lost.</li>
+  <li>Issue at least one command or forfeit a Power Unit.</li></ul>
+  <h2>Pieces</h2>
+  <table class="ref"><tr><th>Piece</th><th>Moves</th><th>Power</th><th></th><th>Piece</th><th>Moves</th><th>Power</th></tr>
+  <tr><td>Infantry</td><td>2</td><td>2</td><td>3 ⇒</td><td>Regiment</td><td>2</td><td>20</td></tr>
+  <tr><td>Tank</td><td>3</td><td>3</td><td>3 ⇒</td><td>Heavy Tank</td><td>3</td><td>30</td></tr>
+  <tr><td>Fighter</td><td>5</td><td>5</td><td>3 ⇒</td><td>Bomber</td><td>5</td><td>25</td></tr>
+  <tr><td>Destroyer</td><td>1</td><td>10</td><td>3 ⇒</td><td>Cruiser</td><td>1</td><td>50</td></tr>
+  <tr><td>Megamissile</td><td>any</td><td>0 (def.)</td><td colspan="3">exchange 100+ power for one; one shot destroys everything in a sector</td></tr></table>
+  <h2>Movement</h2>
+  <ul><li><b>Ground</b> (soldiers, tanks): land only, any direction incl. diagonals. Crossing to another country requires the islands — and they must <b>stop</b> on islands and HQs.</li>
+  <li><b>Planes</b>: 5 sectors, may pass over islands without stopping, but may <b>never fly over sea lanes</b>; entering an HQ ends the flight.</li>
+  <li><b>Ships</b>: 1 area per round, water only — sea lanes, islands, HQ harbors and coastal sectors (never a country's center sector, never diagonally across land).</li>
+  <li>Reserve pieces may only move to your HQ. Nothing may ever move back into reserve. Each piece moves once per round.</li></ul>
+  <h2>Combat</h2>
+  <ul><li>After all moves, every sector holding two or more colours fights: <b>highest total power captures all weaker forces</b> — captured pieces convert to the winner's colour in his reserve (limited by spare pieces!).</li>
+  <li>Ties: pieces that moved in bounce back to where they came from; pieces already there stay.</li></ul>
+  <h2>Power Units ⚡</h2>
+  <ul><li>End of round: <b>1 PU per enemy country you occupy</b> (max 3/round, hold max 10). No PU for islands, lanes, your own land, or flagless countries.</li>
+  <li>Spend in reserve: Infantry 2 · Tank 3 · Fighter 5 · Destroyer 10. Exchange 3 identical smalls anywhere for the big version. Every exchange costs a command.</li></ul>
+  <h2>Megamissile ☢</h2>
+  <ul><li>Built from any mix of pieces/PUs worth 100+, fired at <b>any</b> sector — even reserves. Destroys every piece there (flags survive). Zero defensive value; capturable.</li></ul>
+  <button class="btn primary" onclick="hidePanel()">Back to the war</button>
+  <p class="mini" style="margin-top:8px;">Adapted from the official Power Games International rulebook (1981/1995). Saved alongside this file as original-rules.txt.</p>`);
+}
+
+/* ---------------- setup ---------------- */
+function setupScreen(){
+  let players=4, timer=false, names=["","","",""];
+  const draw=()=>{
+    showPanel(`
+      <h1>POWER</h1><div class="sub" style="color:#7e93ad;letter-spacing:.25em;font-size:12px;">THE BOARD GAME · 1981 · LOCAL HOTSEAT</div>
+      <p style="margin-top:12px;">Command infantry, tanks, fighters, bombers, destroyers and cruisers. Write secret orders, strike simultaneously, capture every flag.</p>
+      <label>Players</label>
+      <div class="segs" id="pseg">
+        ${[2,3,4].map(n=>`<div class="seg ${players===n?"on":""}" data-n="${n}">${n} players</div>`).join("")}
+      </div>
+      <p class="mini" style="margin-top:4px;">${players===2?"Each player commands two adjacent countries (10 commands/round).":players===3?"The fourth country fights as mercenaries — anyone may command them.":"Four countries, every player for himself."}</p>
+      ${Array.from({length:players},(_,i)=>`<label>Player ${i+1} ${players===4?"("+ARMIES[i].name+")":players===3?"("+ARMIES[i].name+")":"("+(i===0?"Red + Black":"Yellow + White")+")"}</label>
+        <input type="text" id="nm${i}" placeholder="${players===4||players===3?ARMIES[i].name:"Player "+(i+1)}" value="${names[i]||""}">`).join("")}
+      <label>3-minute planning timer</label>
+      <div class="segs" id="tseg">
+        <div class="seg ${!timer?"on":""}" data-t="0">Off — relaxed</div>
+        <div class="seg ${timer?"on":""}" data-t="1">On — authentic</div>
+      </div>
+      <div style="margin-top:18px;">
+        <button class="btn primary" id="startbtn" style="font-size:16px;padding:10px 26px;">Start the war</button>
+        <button class="btn" id="rules0">Rules</button>
+      </div>`);
+    document.querySelectorAll("#pseg .seg").forEach(s=>s.onclick=()=>{players=+s.getAttribute("data-n"); draw();});
+    document.querySelectorAll("#tseg .seg").forEach(s=>s.onclick=()=>{timer=s.getAttribute("data-t")==="1"; draw();});
+    document.getElementById("rules0").onclick=()=>{rulesPanel(); document.querySelector("#overlaypanel .btn.primary").onclick=draw;};
+    document.getElementById("startbtn").onclick=()=>{
+      for(let i=0;i<players;i++) names[i]=document.getElementById("nm"+i).value.trim();
+      newGame({players,timer,names});
+      hidePanel();
+      log(`<span class="imp">A new war begins — ${players} players.</span>`);
+      startPlanning();
+    };
+    for(let i=0;i<players;i++) document.getElementById("nm"+i).oninput=e=>names[i]=e.target.value;
+  };
+  draw();
+}
+
+/* ---------------- boot ---------------- */
+drawBoard();
+newGame({players:4,timer:false,names:[]});
+renderAll();
+document.getElementById("donebtn").onclick=donePlanning;
+document.getElementById("rulesbtn").onclick=rulesPanel;
+document.getElementById("restartbtn").onclick=()=>location.reload();
+document.getElementById("scorebtn").onclick=tournamentScore;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ deselect(); renderAll(); } });
+setupScreen();
+
+/* debug hooks */
+window.PWR={get G(){return G;},get PG(){return PG;},areas,landAdj,seaAdj,legalDests,TYPES,
+  set speed(v){UI.speed=v;}, UI, applyCmd, clone};
+</script>
+</body>
+</html>

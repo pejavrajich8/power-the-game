@@ -1,0 +1,703 @@
+POWER ”The Game” 
+For 2 to 4 Players Ages12 to Adult 
+POWER ”The Game” pits your strategic skills against your opponents in a race to conquer the world. You will direct infantry, tanks, ships, and air power to attack your enemies and to defend your home base. Your boldness and cunning are critical to your successful domination of the globe. 
+ OBJECT 
+To eliminate your opponents by occupying their home base and having your infantry (either single soldiers or regiments) capture their flag. 
+  
+EQUIPMENT 
+1 game board 
+4 sets of playing pieces, each in a different color 4 quick reference cards 
+4 command pads 
+1 three-minute timer 
+  
+Game board shows four countries, each divided into nine sectors (B1 to G6). Each country also has a home-base sector (A1, A2, H1, H2) and a RESERVE (located along the edge of the board next to the home base). Five islands (N, S, E, W, X) lie between the countries. Sea lanes (S1 to S12) border the countries and islands. 
+  
+Playing pieces consist of the following pieces in each color: 
+  
+10 Power Units (lightning bolts) 
+1 Flag 
+1 Megamissile 
+4 Destroyers (small ships) 
+2 Cruisers (large ships) 
+5 Fighters (small planes) 
+3 Bombers (large planes) 
+5 Tanks (small) 
+3 Heavy Tanks (large) 
+9 Infantry (single soldiers) 
+Regiments large soldier pieces) are three single infantry pieces snapped together 
+Quick reference cards list the playing pieces, their maximum allowable moves per round, and their power values: 
+  
+                        MAX        POWER                             MAX        POWER 
+PIECE           MOVES     VALUE     PIECE            MOVES      VALUE 
+Infantry              2               2           Regiment            3                20 
+Tank                  3               3           Heavy Tank        3                20 
+Fighter               5              5            Bomber               5               25 
+Destroyer          1              10          Cruiser                1                50 
+Megamissile     ANY             * (used only once) 
+  
+  
+*Power value in offensive moves = unlimited 
+Power value in defending sector = none 
+Power value in exchanging = 100 
+  
+Command pads contain a form on which you write down the commands you will issue during a round. The form has three columns (PIECE, From, TO) and five rows to record five commands). 
+  
+Three-minute timer measures the time limit you have for writing the five commands you plan to carry out during the round. 
+  
+PLAY 
+Setting Up 
+  
+Select your home base (A1, A2, H1, or H2), a set of playing pieces, a quick reference card, and a movement pad. Next, place the following pieces in your home base: 
+1 Flag 
+2 Infantry single soldiers) 
+2 Tanks (small) 
+2 Fighters (small planes 
+2 Destroyers (small ships) 
+  
+COMMANDS: Moving and Exchanging 
+During a round, you are allowed up to five separate commands. These commands fall into two categories: moving and exchanging. Moving means moving a playing piece from one sector to another. Exchanging means turning in playing pieces or Power Units for new playing pieces. 
+  
+Moving Infantry and Regiments 
+Infantry and Regiments (soldiers) can only move two sectors (or less) in the same round and only through sectors containing land. Infantry travel from one country to another by stopping on island sectors (N, S, W, E, X) that lie between countries. When Infantry enter an island or a home base, they cannot move any farther during that round, even if they have a movement count remaining. They must wait until the next round to move again. 
+Moving Tanks and Heavy Tanks. Tanks can move three sectors (or less) in the same round. Like Infantry, they can only travel through sectors containing land, and they must stop on islands to get from one country to another Also like Infantry, Tanks cannot enter and exit an island or home base in the same round even if they have movement counts remaining. They must wait until the next round to move on. 
+  
+Moving Fighters and Bombers. Fighters and Bombers can move five sectors (or less) in the same round, but they cannot fly over sea lanes (S1 through S12). Planes cannot enter and leave a home-base sector in the same round but they can pass over island sectors without stopping. 
+  
+Moving Destroyers and Cruisers. Destroyers and Cruisers have a movement allowance of one, and they are restricted to sectors containing water. They can sail into a country’s beach sectors, home-bases, and island sectors, but they cannot travel diagonally across countries. 
+  
+Moving Megamissiles. A Megamissile can only be used once, but it can be sent into any sector you want, including a home-base or RESERVE sector. It can even be directed to the same sector it was launched from. 
+  
+Exchanging Power Units for small playing pieces. Power Units are used to ”buy” additional small playing pieces. The ”cost” of a piece is the same as its power value; you can exchange two Power Units for a new Infantry, ten Power Units for a new Destroyer, etc. 
+  
+Exchanging three small playing pieces for one large piece. When you have collected three small playing pieces of the same type in the same sector, you may exchange them for a large piece of the same type. The large piece is placed in the same sector the small pieces were in. You can only exchange small playing pieces for the same type of large playing piece (Fighters for a Bomber, Destroyers for a Cruiser, etc.), except the Megamissile. 
+  
+Exchanging for a Megamlssile. Megamissiles can be exchanged for a combination of existing playing pieces and Power Units. For example, you can exchange a Cruiser (power value = 50), a Heavy Tank power value = 30), a Destroyer (power value = 10), and 10 Power Units for a Megamissile. The Megamissile is placed in the sector where all the pieces were. No ”change” is given when you exchange for a Megamissile; power value overages are lost. 
+  
+Planning Your Command 
+Select a player to be the first official. When you are ready to begin play, the official says, ”Ready,” then (when everyone is ready), ”Go.” The official then turns the timer over to start the three-minute countdown. 
+  
+NOTE If a timeout is called, the official should tum the timer on its side to stop the clock. 
+  
+You now have three minutes s to write down the five commands you want to carry out during the round. You may write moves, exchanges, or both. 
+  
+During the planning stage you may not engage in talk that will influence other players. In fact, you should be quiet until everyone is finished or the three minutes is up. 
+Rules to follow when planning your commands: 
+  
+•        You may have more than one of your pieces occupying the same sector. 
+•        You may move in any direction you want, including diagonally. Going from G6 to E4, for example, is counted as a two-sector move. 
+•        Pieces in RESERVE can only move to the home-base sector. Pieces may never move back into RESERVE. 
+•        Pieces cannot be moved more than once in a round. For example, you cannot move a ship from N to S4 and then from S4 to X in the same round. 
+•        Pieces can be moved and then exchanged in the same round (which counts as two commands). For example, you can move a Fighter into a sector that already has two other Fighters in it and then exchange them for a Bomber. (You cannot move the Bomber, however, until the next round.) 
+•        Pieces may be exchanged more than once in a round. For example, you may exchange two Power Units in RESERVE for an Infantry. You may now exchange the new Infantry, along with the two other Infantry pieces you have in RESERVE, for a Regiment. 
+•        Pieces cannot move in the same round after they have been exchanged. There are two exceptions: pieces can be exchanged in RESERVE and then moved into home base (two commands), and Megamissiles can be exchanged and then launched in the same round (also two commands). 
+To make things simpler when you’re writing your commands, use the following notations: 
+  
+I       Infantry                          R      Regiment 
+T      Tank                              H      Heavy Tank 
+F      Fighter                           B      Bomber 
+D      Destroyer                      C      Cruiser 
+M     Megamissile                   P      Power Unit(s) 
+X      Exchange 
+  
+A plan for a given round might look like this: 
+  
+PIECE FROM TO 
+D         S2        B4      move Destroyer from S2 to 84 
+T          D4       X        move Tank from D4 to island X 
+T          A2       D4      move other Tank from A2 to D4 
+B          D4       G1      move Bomber from D4 to G1 
+X          2P        I        exchange 2 Power Units for one Infantry (put in RESERVE) 
+  
+When the time is up, the official says, ”Stop.” At this point, you must stop. If you haven’t finished recording all five commands, you can only act on those commands that you have written down. 
+You are required to issue at least one command in each round. If you fail to move (or exchange), you must give up one Power Unit. If you don’t have a Power Unit, you must exchange the playing piece with the lowest power value (from anywhere on the board) for the its equivalent in Power Units (or, in the case where your lowest piece is large, you exchange it for two smaller pieces plus Power Units). The extra Power Units (and small pieces, if any) are placed in your RESERVE, not back in the sector they came from. 
+  
+Implementing Your Commands 
+  
+The next stage is carried out in the following order: 
+  
+1. Move and Exchange Pieces. Starting with the official and then going clockwise, players read aloud from their command pads and then move and exchange their pieces according to what is written. (You are required to show your actual written commands to your opponents upon request. We encourage players to make this request regularly.) illegal commands are cancelled. For example, if you mistakenly planned to move a Tank from H2 to X (a four-sector move), the Tank would stay in H2 and you would ’lose’ that command. 
+  
+2. Resolve Conflicts. Conflict is resolved only after all four players have moved and exchanged their pieces. When a sector is occupied by more than one player, each player counts up the power values of its pieces in the conflicted sector. The player with the highest total power value wins the sector and captures all the opposing pieces (even if two other players, with lesser power values, are tied). 
+  
+Rules for resolving ties: 
+  
+•         Pieces belonging to the tied players must retreat to the sectors they came from. 
+•         Pieces that were already in the tied sector at the beginning of the round do not retreat; they stay in the tied sector. 
+•         If a piece retreats to a sector that is occupied by another player, this conflict is resolved following ordinary conflict resolution rules. 
+•         Pieces only retreat once in a round; if a new tie exists in the sector your piece retreats to, only your opponent retreats. 
+•         If there are three players in a conflicted sector and if the two players with the highest power values are tied, the tied players retreat and the remaining player’s pieces stay in the sector. 
+•         if there are four players in a sector and the two players with the highest power values are tied, they retreat and the two remaining players battle it out. (If they are tied, they retreat, too.) 
+•         You may attack and occupy your opponent’s home base, but you cannot capture the flag unless you have an Infantry or Regiment piece among your forces. 
+Rules for resolving conflicts with Megamissiles: 
+  
+•         A Megamissile’s power value only counts in battle when it is launched. A Megamissile has no defensive power, so if one is sitting in a sector by itself, for example, any opposing piece can conquer it. If you have a Megamissile sitting in a sector with your Bomber and if the sector is attacked by a Cruiser, the Cruiser wins the sector and captures both your Bomber and your Megamissile. 
+•         Captured Megamissiles go into your RESERVE (and can be launched only from there). 
+•         Megamissiles cannot be moved (unless captured); they can only be launched. 
+•         When a Megamissile is launched into a sector, all forces in the sector are completely destroyed, including any of your own forces. Since only debris remains, all pieces that were in the sector (including the Megamissile) are removed from the board and the sector is unoccupied. If the sector is a home base, the flag remains standing in the sector and is not captured. 
+•         lf opposing Megamissile are launched into the same sector, they are all destroyed – along with all other forces in the sector – and the sector is then unoccupied. 
+Captured pieces go into your RESERVE. After all conflicts are resolved, trade the captured pieces in for the same pieces in your color. They are now part of your armed forces. 
+  
+3. Distribute Power Units You get one Power Unit for each opponent’s country you occupy, regardless of how many sectors you occupy in the country or how many pieces you have. The maximum number of Power Units you can get in a round is three. You may not receive a Power Unit for a country without a flag, an island a sea lane, or your own country. Power Units are placed in your RESERVE, where they stay until they are exchanged. 
+  
+4. Resolve Captured Flags. This move must be carried out after all other conflicts are resolved and all Power Units are distributed. When one of your soldiers captures your opponent’s flag you take possession of all the conquered player’s remaining pieces and Power Units, including anything won during this round. The conquered player is now out of the game. 
+Starting the Next Round 
+  
+The timer is passed to the person sitting to the left of the official. This person is the new official for the next round. This procedure continues throughout the game, so players can take turns acting as the official. 
+New rounds should be started promptly, because all planning must be done after the timer has started – not before. 
+  
+WINNING THE GAME 
+  
+You win POWER ”The Game” TM when you have conquered the world by capturing the flag of your last remaining opponent REMEMBER: There must be an Infantry or Regiment piece among the pieces that capture the flag. 
+ 
+TWO-PLAVER GAME 
+  
+When two people are playing, each person plays two countries (and two sets of pieces) which are next to each other on the board. You win when you capture both your opponent’s flags. 
+  
+Special rules you should follow in the two-player game: 
+  
+•         You have six minutes to plan your commands. (Turn the timer over again after the first three minutes are up, and announce ”half time.”) 
+  
+•         You have ten commands for each round: five for each color. 
+•         You may combine your colors to capture a sector, since you count the total of both colors when determining the winner. Both forces of the winning player remain in the sector 
+•         Captured pieces go into the armed forces of the color that won the conflict You may not switch pieces between the two colors you are playing 
+•         If you have an equal force of both colors in a sector that you have captured from your opponents, you may choose which color gets the conquered pieces. You may not split the conquered pieces between the two colors. 
+  
+THREE-PLAYER GAME 
+  
+In a three-player game the fourth country is considered ”mercenary.” The mercenary force is directed by the three active players. Here are the rules to follow: 
+  
+•         Set up the mercenary country in the same way you set up the other three countries. 
+•         Any of the three players can move mercenary pieces. It two or three players try to move the same piece, the moves cancel each other out and the piece stays where it is. 
+•         You may devote as many of your five commands to moving and exchanging mercenary pieces as you want. 
+•         You may deliberately move a mercenary piece so that your forces can capture it. 
+•         If all the mercenary’s pieces have been captured but its flag is still standing, each player occupying a sector of the mercenary country will get a Power Unit. 
+•         When you capture mercenary pieces, they are added to your forces, following the same procedure used when you capture any enemy piece. 
+•         When a mercenary captures pieces they are added to its RESERVE, along with any Power Units won. 
+•         When you capture the mercenary flag, the mercenary country is out of play, and you take possession of all the mercenary remaining pieces and Power Units. 
+TOURNAMENT PLAY 
+  
+In tournaments, a time limit of two hours is set. If the time is up during a round, the round is finished. The official must announce ’Final Round” at the beginning of the last round. 
+  
+The winner is the player with the highest total of power values. This number is derived by counting the power values of each piece a players has in all sectors (including RESERVE) and by counting all Power Units. 
+  
+To compete in company-sponsored tournaments, join the World Association of Power Players (WAPP). WAPP holds official Power tournaments, publishes a regular newsletter, and more. Call or write us for details. 
+  
+ADDITIONAL PIECES 
+  
+If you would like to order additional sets of pieces or additional games, please write or call us. 
+We would be happy to hear from you. 
+  
+5 through 8 player packets available. 
+Send in WAPP card for free information. 
+  
+ABOVE ALL, HAVE FUN! 
+  
+Power Games International 
+Copyright (c) 1981 by Monte B. Young 
+All Rights Reserved. 
+Manufactured and Distributed By: 
+Power Games International 
+
+
+
+RULES IN DANISH NEXT PAGE
+
+
+POWER
+THE GAME
+
+SPILLEREGLER
+
+INDHOLD
+192 brikker i fire farver, hvert sæt består af 9 infanterisoldater, 6 kampvogne, 3 store kampvogne, 6 jagerfly, 3 bombefly, 6 destroyere, 3 krydsere, 1 Megamissil, 1 flag og 10 Power point.
+1 spillebræt
+4 reserveområder
+1 timeglas (3 minutter)
+4 kommandoblokke
+4 blyanter
+
+FORMÅL MED SPILLET
+At bekæmpe modstanderne ved at erobre deres flag.
+
+Hver spiller får et land samt de militære styrker, der er nødvendige for at forsvare landet og angribe modstandernes lande. Kampen vil blive opdelt i klart afgrænsede runder, således at hele spillet højst kommer til at vare to timer. I hver runde forbereder samtlige spillere samtidigt deres kommandoer i løbet af en planlægningsperiode, der varer tre minutter. Hver spiller nedskriver i løbet af perioden op til fem kommandoer med henblik på at forsvare eget territorium og angribe modstanderne. Det er meningen at hver spiller skal indsætte sine land-, luft– og flådestyrker i modstandernes lande, nedkæmpe eventuel modstand, invadere hovedkvarteret og erobre modstandernes flag !
+
+SPILLETS OPBYGNING
+
+KAMPPLADSEN
+Den strategiske opdeling af POWER kamppladsen består af 4 lande omdelt i hver ni sektorer, 4 hovedkvarter, 5 øer og 12 sejlrender.
+Hver spiller har sit eget land med tilhørende hovedkvarter.
+De øer og sejlrender, der adskiller landene, er neutrale områder.
+Hovedkvarter (HQ): Kommandoposten, hvorfra spillerne starter deres angreb og forsvare deres flag.
+
+STYRKERNE
+Nedenfor er anført en liste over samtlige spillebrikker. Spillerne starter kampen med to af hver af de små brikker. Disse byttes så ud med større brikker, efterhånden som spillerne får mere styrke. Power point samles et ad gangen og bruges til at købe flere brikker for.
+
+BRIKKER I GRUPPE 1
+Infanteri – Lille kampvogn – Jagerfly – Destroyer
+
+BRIKKER I GRUPPE 2
+Regiment – Stor kampvogn – Bombefly – Krydser
+
+Herudover findes der Megamissilet og Power point.
+
+
+For at føre effektiv krig mod en modstander skal spillerne vide, hvad hver brik kan og hvilken værdi den har. Hver brik flyttes på en særlig måde. Den kan enten bevæge sig til lands eller til vands, eller den kan kun flyttes over en begrænset afstand.
+Styrkeværdierne og den maksimale afstand hver brik kan flyttes i en runde, fremgår af dette skema.
+
+Gruppe 1Maks. trækStyrkeværdiOmbytningsprisGruppe 2Maks. trækStyrkeværdiInfanteri223 infanteristyrker forRegiment220Lille kampvogn333 små kampvogne forStor kampvogn330Jagerfly553 jagerfly forBombefly525Destroyer1103 destroyere forKrydser150Megamissil
+1 overalt
+0
+Alle typer brikker hvis styrkeværdi er 100 eller derover
+
+Skemaet findes desuden ud for hvert reserveområde, således at spillerne kan bruge det under spillet. Spillerne kan bruge skemaet, når de optæller styrkeværdi og ombytter brikker.
+Brikkerne i Gruppe 2 har meget større styrke end styrkerne i Gruppe 1. Disse styrker er derfor meget større. Infanterisoldater kan sættes sammen, således at de danner et meget stærkere regiment.
+
+Flytning af styrkerne
+De enkelte brikker kan flyttes vandret, lodret og diagonalt.
+
+Infanteri og regiment: Infanteriet består af enkelte soldater. Et regiment er en gruppe på tre infanterisoldater, der er sat sammen. Disse tropper kan bevæge sig op til to sektorer med land og kyst i én runde. De kan ikke rykke over sejlrender og skal gå over øerne for at komme fra ét land til et andet.
+
+Små kampvogne og store kampvogne: Kampvogne flyttes på samme måde som infanterisoldater og regimenter, men de kan flyttes op til  tre sektorer med land eller kyst i hver runde. De kan ikke flyttes over sejlrender og skal køre over øerne for at komme fra ét land til et andet.
+
+POWER ADVARSEL: Infanteri, regimenter, små kampvogne og store kampvogne kan ikke flyttes ind og ud af en ø eller et hovedkvarter i samme runde. Selv om ens piller kun flyttes én sektor for at komme ind på en ø eller i et hovedkvarter, skal spilleren vente til næste runde med at forlade øen eller hovedkvarteret.
+
+Jager- og bombefly: Jager- og bombefly kan flyttes op til fem sektorer i en runde. De kan flyve over øerne uden at standse, men øen tæller som et ryk. De kan ikke flyve over sejlrender og skal derfor flyve over øerne for at komme fra ét land til et andet.
+
+Krydsere og destroyere: Krydsere og destroyere kan kun flytte en enkelt sektor i en runde. De kan kun flyttes i sektorer med vand eller kyst og kan ikke sejle diagonalt over sektorer, der kun indeholder land. Midtersektorerne i hvert land (sektor 4) er således de eneste, der ikke kan nås af krydsere eller destroyere.
+
+Megamissiler: Dette er meget specielle brikker, hvis funktion forklares nærmere  under afsnittet Megamissil.
+
+Ikke tilladte træk: Spillerne skal huske, hvad hver enkelt brik kan og ikke kan, da det kan koste dyrt at foretage ikke tilladte træk. Hvis en spiller gør noget forkert, kan det forkerte træk ikke erstattes af en tilladt træk.
+
+Styreværdi: Resultat af slaget
+Spillerne bruger de forskellige styrkeværdier til at bedømme  hver briks styrke og derefter bruge brikken så effektivt som muligt. Resultatet af hvert slag fastlægges efter hver runde ved at lægge den samlede styrkeværdi i en sektor sammen for hver modstander. Den spiller, der har størst styrkeværdi i den pågældende sektor, vinder slaget. Eksempel: En kampvogn har en styrkeværdi på 3, mens en destroyer har en styrkeværdi på 10. Hvis en enkelt kampvogn og en enkelt destroyer udkæmper et slag i den samme sektor ved afslutningen af en runde, vil destroyeren derfor vinde. Sejrherren udskifter derefter de slagne brikker i sin egen farve og placere dem i sit reserveområde.
+
+Udvidelse af styrkerne:
+Power point: De Power point, der erhverves i løbet af spillet, kan bruges til at udvide styrkerne. Man får et Power point, når en af ens brikker besætter en sektor i en modstanders land ved afslutningen af en runde. Disse Power point placeres i reserveområdet. Brikkerne koster lige så mange Power point som deres styrkeværdi. Infanterisoldater koster således to Power point, en kampvogn koster tre Power point, et jagerfly koster fem Power point og en destroyer koster ti Power point.
+
+Ombytning af brikker: Spillerne kan også ombytte tre små brikker som befinder sig i samme sektor, for én stor brik af samme type. Spillerne kan således ikke ombytte tre kampvogne med en krydser eller to jagerfly for en destroyer. Det er muligt at ombytte tre infanterisoldater for et regiment, tre små kampvogne for en stor kampvogn, tre jagerfly for et bombefly eller tre destroyere for en krydser. De tre brikker skal befinde sig i samme sektor, når ombytningen foregår. Ombytning af brikker tæller som en kommando.
+
+POWER HEMMELIGHED: Ombytning af tre små brikker for en større brik giver spillerne meget større samlet styrke. Ved at ombytte tre små kampvogne for en stor kampvogn går spilleren fra en samlet styrke på 9 til en samlet styrke på 30. Derved opnår spilleren meget større styrke i en enkelt kommando.
+
+SPILLET GANG
+
+FORBEREDELSE
+
+Opstilling af spillet: Spillebrættet placeres midt på et bord, hvor det kan nås af samtlige spillere. Nu kan kampen begynde. Det forudsættes, at der er fire spillere. Særlige regler for spil med to eller tre deltagere findes under afsnittet med Regler for spil med færre end fire spillere.
+Spillerne begynder med at vælge deres hovedkvarter og et sæt spillebrikker i tilsvarende farve, et reserveområde, en kommandoblok og en blyant.
+I reserveområdet findes der en oversigt, som kan hjælpe spillerne med at huske de enkelte brikkers bevægelser og styrkeværdier.
+
+Startstyrker
+Spillerne placerer følgende brikker i deres hovedkvarter:
+1 flag (klemmes fast på kanten af spillepladen), 2 infanterisoldater, 2 små kampvogne, 2 jagerfly og 2 destroyere.
+
+Spil-leder
+En af spillerne vælges som spil-leder. Denne rolle går fra spiller til spiller i urets retning efter hver runde. Den første spil-leder vigtigste rolle er at notere tidspunktet for kampens start. Hele kampen må højst vare to timer.
+Spil-lederen styrer også timeglasset. Dette timeglas angiver, hvor lang tid spillerne har til at planlægge deres strategi for hver runde. Ved starten af planlægningsperioden siger spil-lederen ”klar, parat”, og – hvis der ikke er protester -  ”start” og vender samtidig timeglasset for at markere begyndelsen på planlægningsperioden. Hvis en spiller ikke har taget sine Power point, når spil-lederen siger ”start”, er de tabt !
+
+NB: Spil-lederen er ansvarlig for at fremskynde afklaringen af konflikter. Der spildes ofte tid ved, at spillere er langsomme med at udføre deres kommandoer, hvilket går ud over de andre spillere.
+
+POWER HEMMELIGHED: Hvis en spiller beder om en time-out, skal spil-lederen lægge timeglasset på siden for at ”standse tiden”. Hver spiller har lov til at bede om en time-out pr. spil. En time-out må højst vare tre minutter.
+
+Spillerunder
+Kampen opdeles i klart afgrænsede spillerunder.
+En runde består af seks faser:
+Planlægning af kommandoer
+Udførelse af kommandoer
+Løsning af konflikter
+Erobring af brikker
+Samling af Power point
+Erobring af flag
+
+SÅDAN SPILLES EN RUNDE
+
+1. Planlægning af kommandoer
+I denne fase (der varer tre minutter) kan spilleren udføre op til fem kommandoer.
+Spillerne må gerne vælge at udføre færre kommandoer, men de skal udføre mindst én kommando. Der findes to former for kommandoer: flytte en brik fra én sektor til en anden og at ombytte små brikker og/eller Power point med større brikker.
+
+POWER HEMMELIGHED: Det kan ofte være en fordel ikke at flytte en brik det maksimale antal sektorer for derved at forvirre modstanderne.
+
+I løbet af den tre minutter lange planlægningsperiode må spillerne ikke føre nogen form for samtale, som kan have indflydelse på de andre spilleres planlægning. Det er således ikke tilladt at komme med nogen mundtlige trusler ! Spillerne skal være stille, indtil alle er færdige med at planlægge deres træk og ombytninger, eller indtil de tre minutter er gået. For hurtighedens skyld nedskrives kommandoerne ved hjælp af følgende koder:
+
+I  = infanteri        R  = regiment         G0 = gul sektor 0
+T  = lille kampvogn   ST = stor kampvogn    B2 = blå sektor 2
+J  = jagerfly         B  = bombefly         XI = X øen
+D  = destroyer        K  = krydser          WI = Vestøen
+M  = Megamissil       P  = Power point      S4 = sejlrende 4
+X  = ombytning        HQ = hovedkvarter     RV = reserveområde
+
+Disse forkortelser er angivet nederst på hver kommandoblok.
+De fem kommandoer på en kommandoblok for en enkelt runde kan se således ud:
+
+Brik
+Fra
+Til
+Forklaring
+D
+S12
+WI
+flyt destroyer fra sejlrende 12 til Vestøen
+T
+G4
+XI
+flyt lille kampvogn fra gul sektor 4 til X øen
+T
+B2
+B1
+flyt anden lille kampvogn fra blå sektor 2 til blå sektor 0
+B
+G4
+B0
+flyt bombefly fra gul sektor 4 til blå sektor 0
+2P
+RV
+I
+ombyt 2 Power point i reserveområdet til en infanterisoldat
+
+Kommandoregler
+Følgende regler skal overholdes, når kommandoerne planlægges:
+
+Spillerne skal udføre mindst én kommando i hver runde. Hvis de ikke foretager et træk eller ombytter brikker, skal de aflevere et Power point. Hvis en spiller ikke har et Power point, skal han eller hun ombytte den af sine brikker, der har den mindste styrke (uanset hvor den befinder sig på kamppladsen/reserveområdet), med et tilsvarende antal Power point. Den tabte styrkeenhed fjernes fra kamppladsen, og de ekstra Power point placeres i reserveområdet. Såfremt den brik, der har den laveste styrke, er et regiment, en stor kampvogn eller en krydser, skal spilleren ombytte brikken for to mindre brikker samt Power point for den tredje brik. Det ene Power point fjernes, og de resterende to brikker samt de resterende Power point placeres i spillerens reserveområde.
+Spilleren må gerne have mere end én brik i samme sektor.
+Brikkerne kan flyttes og derefter ombyttes i samme runde (dette gælder for to kommandoer). En spiller kan f.eks. flytte et jagerfly fra én sektor til en anden sektor (én kommando), som allerede indeholder to af spillerens jagerfly, og derefter ombytte de tre jagerfly med et bombefly (anden kommando). Spilleren har imidlertid ikke lov til at flytte bombeflyet før næste runde.
+Brikker i reserveområdet kan flyttes én gang i en runde og kun til hovedkvarteret. De kan ombyttes i reserveområdet og derefter flyttes til hovedkvarteret, hvilket gælder for to kommandoer. Brikker kan ikke ombyttes, og derefter flyttes, medmindre de er placeret i reserveområdet. Brikker kan ikke flyttes tilbage til reserveområdet.
+Brikker i reserveområdet kan ombyttes mere end én gang i samme runde. En spiller kan f.eks. ombytte to Power point for en infanterisoldat (første kommando) og derefter ombytte den samme infanterisoldet sammen med to andre for et regiment (anden kommando).
+
+Når spil-lederen siger ”stop”, skal alle spillere omgående ophøre med at nedskrive kommandoer og lægge deres kommandoblokke fra sig. Spillerne må kun udføre nedskrevne kommandoer.
+
+2. Udførelse af kommandoer
+Der startes med spil-lederen og fortsættes i urets retning. Alle spillere skal lægge deres kommandoblokke, så alle kan se dem, og alle skal læse deres kommandoer højt. Samtidig med, at spilleren læser sin kommando, flyttes eller ombyttes brikken på spillebrættet.
+Alle spillere skal fremvise deres skriftlige kommandoer, hvis de bliver bedt om det.
+Kommandoerne skal læses fra top til bund, da enkelte kommandoer ofte vil have indflydelse på de efterfølgende kommandoer.
+Ikke tilladte kommandoer annulleres. Hvis en spiller f.eks. forsøger at bevæge en af sine kampvogne fire sektorer (en kampvogn må højst flyttes tre sektorer), skal kampvognen blive stående i den oprindelige sektor, og spilleren går glip af den pågældende kommando.
+Hvis alle en spillers fem kommandoer er ikke tilladte kommandoer (eller spilleren slet ikke har foretaget nogen træk), mister spilleren et Power point. Hvis spilleren ikke har nogen Power point, skal den mindste brik ombyttes med Power point, hvorefter bøden betales.
+
+3. Løsning af konflikter
+Resultat af slag: Konflikterne kan først løses, når alle spillerne har flyttet og ombyttet deres brikker. Enhver sektor (også hovedkvarter), hvori der befinder sig mere end en spillers brikker, har en konflikt, der skal løses.
+
+Når mere end en spiller befinder sig i den samme sektor, skal spillerne lægge styrkeværdierne af deres brikker i sektoren sammen. Den spiller, hvis brikker tilsammen har den højeste styrkeværdi, vinderslaget og erobrer modstanderens brikker. Sejrherren ombytter de erobrede brikker med tilsvarende brikker i sin egen farve og placerer disse i sit reserveområde. Disse brikker indgår ni i sejrherrens væbnede styrker.
+
+Uafgjort: Spillerne skal altid afklare uafgjorte positioner, før de går ind i nye slag.
+
+Hvis modstandere, der befinder sig i samme sektor, ”står uafgjort” (dvs. deres brikker i sektoren har samme styrkeværdi), skal disse brikker trække sig tilbage til den sektor, de kom fra – dette kaldes et tilbageslag. Brikker, som allerede befandt sig i sektoren, før runden begyndte, skal ikke trækkes tilbage. De bliver i den sektor, hvor slaget endte uafgjort.
+Såfremt brikkerne trækkes tilbage til en sektor, der allerede er besat af en anden spiller, løses konflikten ifølge de almindelige regler for konfliktløsning (spilleren med den største styrke vinder).
+Brikker kan kun trækkes tilbage en enkelt gang i samme runde. Hvis en brik trækkes tilbage til den oprindelige sektor, og der på ny opstår en uafgjort situation, skal modstanderens brikker trække sig tilbage.
+Hvis tre spillere er involveret i en konflikt, og de to med størst styrkeværdi står uafgjort, skal disse to trække sig tilbage, og den tredje spiller med den laveste styrkeværdi forbliver uberørt i sektoren. Hvis de to spillere med den laveste styrkeværdi står uafgjort, vinder den tredje spiller med den højeste styrkeværdi alle brikkerne fra de to andre spillere, der står uafgjort.
+Hvis der er fire spillere i en sektor, og de to spillere med den højeste styrkeværdi står uafgjort, skal de trække sig tilbage, og de to andre spillere skal udkæmpe slaget. Hvis de også står uafgjort, skal de ligeledes trække sig tilbage.
+
+POWER TIP: Det kan være en god ide at rykke en stærk brik som f.eks. et bombefly ind i en modstanders hovedkvarter for at forhindre modstanderen i at tage brikker ind fra reserveområdet. Dette kaldes en blokade.
+
+4. Erobring af brikker
+Efter et slag går de erobrede eller besejrede brikker til sejrherren. Erobrede brikker fjernes fra sektoren og ombyttes med tilsvarende brikker i sejrherrens farve, hvorefter de placeres i sejrherrens reserveområde.
+
+5. Samling af Power point
+Når alle konflikter er løst, skal der fordeles Power point.
+
+Spillerne får et Power point for hvert modstanderland, de har brikker i ved slutningen af runden. De får kun et enkelt Power point pr. land, uanset hvor mange sektorer, de har besat, og uanset hvor mange brikker, de har i landet.
+Spillerne får ikke noget Power point for deres eget land.
+En spiller kan således maksimalt få tre Power point pr. runde.
+Spillerne får ikke noget Power point for at befinde sig i et land, hvor der ikke er noget flag. Når et flag er erobret, bliver landet til neutralt område.
+Spillerne får ikke noget Power point for at stå på en ø eller befinde sig i en sejlrende.
+De opnåede Power point opbevares i spillernes reserveområder, indtil de ombyttes med brikker fra Gruppe 1.
+
+6. Erobring af flag
+Spørgsmål om erobrede flag afklares, når alle andre konflikter er løst, og når alle Power point er uddelt. Et flag anses for at være erobret, når mindst én brik fra angriberens infanteri eller regiment besætter den sektor, hvor modstanderens flag er placeret (dvs. hovedkvarteret), og den samlede angrebsstyrke styrkeværdi er større end styrkeværdien for den forsvarende spillers styrker. Det erobrede flag placeres derefter i sejrherrens eget hovedkvarter.
+Sejrherren overtager også alle taberens militærenheder og Power point, som ombyttes med tilsvarende brikker i sejrherrens farve og placeres i dennes reserveområde. Taberen er ude af kampen og dermed ude af spillet.
+
+Spillerne kan ikke erobre flag, medmindre der er infanterisoldater eller et regiment blandt de angribende styrker.
+
+Start af næste runde
+Så snart alle konflikter er løst, kan næste runde begynde. Timeglasset gives videre til spilleren til venstre for den seneste spil-leder. Denne spiller er nu den nye spil-leder.
+
+MEGAMISSIL
+Spillerne kan ombytte enhver kombination af eksisterende brikker og/eller Power point for et megamissil. Brikkerne skal være placeret i samme sektor, før spilleren kan foretage ombytningen. Brikkerne kan enten befinde sig i sektoren, inden runden begynder, eller kan placeres i sektoren ved hjælp af kommandoer, før de ombyttes med et megamissil.
+
+Den samlede styrkeværdi af de brikker og/eller Power point, der ombyttes, skal være mindst 100. En spiller kan f.eks. ombytte en krydser (med en styrkeværdi på 50), en stor kampvogn (med en styrkeværdi på 30) og et regiment (med en styrkeværdi på 20) med et megamissil. Hvis den samlede styrkeværdi er større end 100, mister spilleren den ekstra styrke ved ombytningen. Spilleren kan erhverve lige så mange megamissiler, de har lyst til, i løbet af et spil.
+Et megamissil kan afskydes til enhver sektor på kamppladsen, inklusiv hovedkvarter og reserveområder. Det kan endog afskydes til den sektor, hvorfra det blev affyret.
+Megamissiler kan dannes og affyres i samme runde. Dette tæller som to kommandoer.
+Når et megamissil afsendes til en sektor, herunder reserveområder, ødelægges samtlige styrker i den pågældende sektor. Alle brikker, der befandt sig i sektoren, fjernes helt fra spillebrættet, og sektoren er ikke længere besat. Hvis det drejer sig om et hovedkvarter, bliver flaget stående i sektoren på trods af angrebet fra megamissilet og erobres således ikke. Megamissilet ødelægges også og kan ikke bruges igen.
+Et megamissil har kun styrke, når det affyres. Det har ingen forsvarsstyrke. Hvis en spiller har et megamissil stående i en sektor, og en af modstanderne angriber den sektor, gælder de normale regler for kamp og styrkeværdi.
+Megamissiler kan ikke flyttes (medmindre de erobres). De kan kun affyres.
+Erobrede megamissiler placeres i sejrherrens reserveområde og kan kun affyres derfra.
+Hvis to spillere affyrer megamissiler til den samme sektor, ødelægges de begge sammen med alle andre styrker i sektoren.
+Der gælder to specielle regler for megamissiler i reserveområder:
+Et megamissil kan etableres og affyres fra et reserveområde til enhver sektor på brættet i samme runde.
+Et megamissil kan affyres ind i en modstanders reserveområde og ødelægge alle de brikker og Power point, der befinder sig der.
+
+SÅDAN VINDES SPILLET
+
+Vinderne er den spiller, der først nedkæmper alle de andre modstandere ved at erobre deres flag.
+Såfremt spilleperioden på to timer overskrides, vinder den spiller, der har den højeste samlede styrkeværdi. Denne værdi findes ved at lægge styrkeværdierne for hver brik og hver Power point i alle sektorer, inkl. Reserveområdet, sammen. Hvis mere end en spiller har samme styrkeværdi, vinder den spiller som har flest flag.
+
+REGLER FOR SPIL MED FÆRRE END FIRE SPILLERE
+
+To spillere
+Hver spiller har to lande, der ligger ved siden af hinanden, og to hele sæt brikker.
+Spillerne har seks minutter til at planlægge deres strategi. Når de første tre minutter er gået, vender spil-lederen timeglasset og siger ”halvdelen af tiden er gået”.
+Spillerne må udføre ti kommandoer i hver runde, fem for hver hær, de styrer i hvert af deres to lande.
+Spillerne kan kombinere brikker fra deres to hære for at erobre en sektor. De tæller så styrkeværdien for begge farver i sektoren for at finde ud af, hvem der vinder konflikten. Efter hver konflikt bliver begge sejrherrens styrker i sektoren.
+Selv om spillerne kan kombinere begge sæt brikker i en sektor for at udkæmpe slag, kan de ikke bruge brikker med forskellige farver til at opgradere og ombytte. De kan f.eks. ikke kombinere to røde kampvogne og en gul kampvogn for at få en stor rød kampvogn.
+Erobrede brikker flyttes til reserveområdet i det land, der vandt slaget. Spillerne må ikke bytte brikker mellem landene. Hvis de har samme styrkeværdi fra begge deres lande i en sektor, som de har erobret fra deres modstander, kan de selv vælge, hvilket land der skal have de erobrede styrker. Det er ikke tilladt at dele de erobrede styrker mellem de to lande.
+Der optjenes Power point for brikker, der befinder sig i modstanderens lande efter hver runde. Hvis en spiller har en brik fra hver af sine lande i samme modstanderland, får spilleren et Power point for hver. Disse Power point skal placeres i det reserveområde, der passer til farven. Der er ikke muligt at kombinere Power point. Der kan således højst opnås to Power point pr. farve i hver runde.
+For at vinde skal en spiller erobre begge modstanderens flag.
+
+Tre spillere
+Hver spiller har ét land og styrer én hærstyrke. Det fjerde land og den fjerde hærstyrke betragtes som LEJESOLDATOMRÅDE. Lejesoldattropperne kan styres af enhver af de tre spillere.
+Alle spilleren har lov til at rykke med lejesoldattropperne. Hvis to eller flere modstandere prøver at flytte den samme brik i samme runde, annullerer de to træk hinanden, og brikken bliver, hvor den er. Hvis spillerne imidlertid ønsker at flytte brikken til den samme sektor, skal kommandoen udføres. Hvis der er mere end en brik af den samme type i sektoren, og to spillere forsøger at flytte dem, udføres kommandoerne, men hvis tre spillere forsøger at flytte de samme to brikker, annulleres samtlige kommandoer, og brikkerne bliver, hvor de er.
+Spillerne kan bruge lige så mange af deres fem kommandoer, som de vil, til at flytte og ombytte lejesoldattropper.
+Spillerne kan med vilje flytte lejesoldattropperne hen, hvor deres egne brikker kan erobre dem. Spillere, der behersker denne teknik, vil opnå en fordel i resten af spillet.
+Hvis alle lejesoldattropper er erobret, men flaget endnu ikke er erobret, vil hver spiller, der står i en sektor i lejesoldatområdet, få et Power point.
+Når spillerne erobrer lejesoldatbrikker, foregår det på samme måde, som når modstandernes brikker erobres.
+Når en lejesoldatbrik erobrer brikker eller vinder Power point, placeres de i lejesoldatområdets reserver.
+Hvis en spiller erobrer lejesoldatområdetsflag, udgår lejesoldatlandet af spillet. Den spiller, der har erobret alndet, får alle de brikker og Power point, lejesoldatområdeet råder over. Disse brikekr ombyttes med brikker i sejrherrens farve og placeres i dennes reserveområde.
+For at vinde, skal en spiller erobre begge modstanderes flag.
+
+TIPS, FÆLDER OG STRATEGI
+
+Gode råd
+Spillerne bør prøve at få så mange Power point som muligt i løbet af de første runder. Selv om det kræver tålmodighed, dygtighed og held, vil en spiller hurtigt have fået nok tl at ombytte brikker i Gruppe 1 med meget stærkere brikker fra Gruppe 2.
+Hvis det lykkes en spiller hurtigt at få et bombefly, skulle han eller hun hurtigt kunne få ram på nogle ”lette mål”, f.eks. to destroyere, som en af modstanderne er bange for at flytte ud af sit hovedkvarter.
+Selv om destroyere (styrkeværdi 10) kan være meget nyttige til at forsvare et hovedkvarter, kan spillerne også benytte dem som invasionsstyrke eller som eskorte for tropper, der krydser en ø.
+Selv om en spiller skal have infanterisoldater eller et regiment til at erobre en modstanders flag, er det muligt at forvolde en hel del skade uden sådanne tropper. Hvis en modstander f.eks. har to kampvogne og en destroyer (styrkeværdi 16) i sit hovedkvarter, og en spiller angriber med et bombefly (styrkeværdi 25), erobres alle disse brikker, og samtidig kan modstanderen ikke flytte flere brikker ud fra reserveområdet. Spillerne bør holde øje med hovedkvarterer, der ikke har et godt nok forsvar !
+
+Sådan opnås en styrkeværdi på 20 hurtigt i de to første runder
+Spilleren flyver to jagerfly ind i to forskellige modstanderlande. De giver to Power point til næste rune.
+Disse to Power point ombyttes med en infanterisoldat til reserveområdet, som derefter flyttes til hovedkvarteret.
+De tre infanterisoldater ombyttes med et regiment (styrkeværdi 20).
+
+Fælder
+Spillerne skal passe på ikke at komme til at foretage træk, der ikke er tilladt. Her er nogle af de mest almindelige fejl:
+Glemme at standse kampvogne og infanteri på øerne.
+Ombytte Power point til brikker i reserveområdet og derefter flytte dem til hovedkvarteret – i samme kommando ! (Manøvren tæller som to kommandoer).
+Flyve fly over sejlrender.
+Skrive forkerte koder på kommandoblokken. Spillerne må ikke skrive T for en kampvogn, hvis de ønsker at flytte en stor kampvogn (ST).
+Spillerne skal huske at tage Power point efter hver runde.
+
+NB: Når en brik er flyttet fra reserveområdet til hovedkvarteret, skal spilleren vente en runde med at flytte den ud i kamp. Den eneste undtagelse er megamissilet.
+
+Strategi
+Spillerne skal forsøge at være uforudsigelige.
+En infanterisoldat, der bruges klogt i en modstanders land, kan være en gene og en trussel, og når den kombineres med yderligere styrker, kan den anvendes til at erobre et flag.
+Spillerne bør passe på ”dræberområderne”. Sektorerne 4, 6, 7 og 8 i hvert land ligger kun træk væk fra hovedkvarteret. Selv om infanterisoldater og regimenter kun kan flyttes to sektorer, kan de fra disse sektorer erobre en modstanders flag i en enkelt runde.
+I den første runde kan modstanderne flyve et eller to jagerfly ind i andre lande for at vinde Power point. Da jagerflyene højst kan flyve fem sektorer, kan det være en god ide for spillerne at placere deres brikker (med en styrkeværdi over 10) i sektorerne 0, 3 eller 5. Derved kan spilleren afværge angreb fra et eller to fjendtlige jagerfly.
+Sejlrenderne går over et langt område. Selv om destroyerne og krydserne kun kan bevæges et felt pr. runde, kan de som regel foretage en lang række forskellige træk. Hvis et skib f.eks. befinder sig i sejlrende S3, kan det flytte ind i op til 6 sektorer og 2 øer.
+Spillerne bør holde øje med timeglasset.
+Spillerne bør ikke flytte alle brikker ”uden for rækkevidde” (dvs. mere end to fleter væk) fra hovedkvarteret. Krydsere og destroyere bevæges sig langsomt, hvilket navnlig føles, når man gerne vil have dem tilbage i en fart.
+
+SPIL KLOGT
+OG DEN ENDELIG MAGT
+BLIVER DIN !
+
+
+
+
+POWER „The Game“ für 2 – 4 Spieler ab 12 Jahren
+
+Power „The Game“ setzt Ihre strategischen Fähigkeiten gegen die Ihrer Gegner in einem Rennen um die Eroberung der Welt. Sie führen Infanterie, Panzer, Schiffe und Luftstreitkräfte zum Angriff auf Ihre Gegner und um deren Hauptquartier zu erobern. Kühnheit und List sind nötig für Ihre Weltherrschaft.
+
+Tatsächliches Ziel des Spiels
+Die Eroberung gegnerischen Hauptquartiere mit Hilfe der Infanterie (entweder einzelne Infanteristen oder Regimenter) zu erobern, indem deren Fahne übernommen wird. 
+
+Im Spiel enthaltenes Material:
+1 Spielbrett
+4 Spielersets mit Figuren (Einheiten) in unterschiedlichen Farben und 4 Übersichtskarten
+4 Kommandoblocks
+1 Sanduhr (3 Minuten)
+Das Spielbrett zeigt vier Länder, jedes unterteilt in neun Sektoren (B1 bis G8). Jedes Land verfügt außerdem über einen Hauptquartiersektor (HQ) und eine RESERVE (neben dem HQ am Spielfeldrand). Zwischen den Ländern liegen fünf Inseln(NI, EI, SI, WI, XI). Die Länder und Inseln werden von Seewegen (S1 bis S12) begrenzt.
+
+Nachfolgende Spielfiguren für jede Farbe:
+10	Power-Punkte 	(Blitze)
+1	Fahne
+1	Megamissile 	(Rakete)
+6	Destroyer		(kleine Schiffe)
+3	Cruiser		(große Schiffe)
+5	Fighter		(kleine Flugzeuge)
+3	Bomber		(große Flugzeuge)
+6	Tanks		(kleine Panzer)
+3	Heavy Tanks	(große Panzer)
+9	Infanteristen		(einzelne Soldaten) 
+Regimenter werden aus drei Infanteristen gebildet, indem diese zusammengesteckt werden. 
+
+Obengenannte Figuren sind mit ihrer maximalen Reichweite und ihrer Stärke auf Übersichtskarten aufgelistet:
+Einheit
+max. Reichweite
+Stärke
+Tausch
+Einheit
+max. Reichweite
+Stärke
+Infantry
+        2
+        2
+3x Infantry
+Regiment
+        2
+       20
+Tank
+        3
+        3
+3x Tank
+Heavy Tank
+        3
+       30
+Fighter
+        5
+        5
+3x Fighter
+Bomber
+        5
+       25
+Destroyer
+        1
+       10
+3x Destroyer
+Cruiser
+        1..........
+       50.........
+Megabombe*
+überallhin
+0
+jede Kombination mit der Summe 100 oder höher
+                   	
+*Stärkewert beim Einsatz als Angriffswaffe = unbegrenzt
+Stärkewert bei Verteidigung im eigenen Sektor = 0
+Stärkewert bei Tausch = 100 
+
+Die Kommandoblocks enthalten Tabellen, in die die auszuführenden Befehle jeder Runde eingetragen werden. Jede Tabelle hat drei Spalten (Piece; From; To) und fünf Zeilen für fünf Befehle.
+Die Sanduhr misst die Zeit von drei Minuten, die die Spieler zum Notieren ihrer geplanten Befehle maximal zur Verfügung haben.
+
+Das Spiel
+
+Ohne Vorbereitung geht es nicht
+Wählen Sie Ihr Hauptquartier, die dazugehörigen Einheiten in der entsprechenden Farbe und einen Kommandoblock. Plazieren Sie als nächstes die folgenden Einheiten in Ihr Hauptquartier:
+1 Fahne
+2 Infanteristen
+2 Tanks
+2 Fighter
+2 Destroyer
+
+Rundenbefehle: Bewegung und Tausch
+Während einer Runde ist es Ihnen gestattet bis zu fünf Befehle zu erteilen. Diese Befehle unterteilen sich in zwei Kategorien: Bewegung und Tausch. Bewegung bedeutet eine Einheit von einem Sektor in einen anderen zu ziehen. Tausch bedeutet die Umwandlung von Einheiten oder Power-Punkten in neue Spieleinheiten. Alle Bewegungen können vertikal, horizontal oder diagonal ausgeführt werden, solange die Regeln für die einzelnen Einheiten eingehalten werden.
+Bewegung von Infanterist & Regiment – können bis zu zwei Sektoren (oder weniger) pro Runde bewegt werden. Die Sektoren dürfen Land- oder Küstenregionen beinhalten, jedoch kein Seewege. Um von einem Land zum anderen zu gelangen, müssen diese Einheiten die Inseln (NI, EI, SI, WI, XI) zwischen den Ländern benutzen. Wenn sie während des Zuges auf eine Insel oder ein Hauptquartier gelangen, müssen sie dort halten, auch wenn es theoretisch möglich wäre weiter zu ziehen. Sie müssen bis zur nächsten Runde warten, um weiterzuziehen.
+Bewegung von Tank & Heavy Tank: - können bis zu drei Sektoren weit fahren. Es gelten weiterhin die gleichen Beschränkungen beim Befahren von Inseln und Hauptquartieren wie für Infanterie & Regiment.
+Bewegung von Fighter & Bomber: - können bis zu fünf Sektoren weit fliegen und damit innerhalb einer Runde in ein anderes Land fliegen. Sie dürfen allerdings nicht über Seewege (S1 bis S12) hinweg fliegen. Flugzeuge können nicht innerhalb einer Runde in ein Hauptquartier ziehen und es wieder verlassen. Sie müssen bis zur nächsten Runde warten. Sie dürfen aber über die Inselsektoren ohne Stop hinweg fliegen.
+Bewegung von Destroyer & Cruiser: - können nur einen Sektor pro Runde fahren und natürlich nur solche benutzen, die Wasser enthalten. Sie können in Küstensektoren, Hauptquartiere und Inselsektoren einfahren, jedoch können sie nicht diagonal durch Länder fahren.
+Bewegung von Megamissiles – können nur einmal benutzt werden, aber dürfen in jeden beliebigen Sektor geschickt werden, inklusive Hauptquartiere, RESERVE-Sektoren und den Abschusssektor selbst.
+Tausch von Power-Punkten in kleine Einheiten – Power-Punkte werden genutzt, um zusätzliche kleine Einheiten zu „kaufen“. Die „Kosten“ eine kleinen Einheit richten sich nach ihrem Stärkewert; Sie können zwei Power-Punkte in einen Infanteristen tauschen, zehn Power-Punkte in einen Zerstörer, etc.
+Tausch von drei kleinen Einheiten in eine große – ist dann möglich, wenn sich drei kleine Einheiten des gleichen Typs (3 Fighter zum Bomber, 3 Destroyer zum Cruiser, etc.) in einem Sektor befinden. Die große Einheit wird nach dem Tausch in denselben Sektor plaziert.
+Tausch für eine Megamissile – kann mit jeder beliebigen Kombination von vorhandenen Einheiten und Power-Punkten durchgeführt werden, z.B. können Sie einen Cruiser (Stärkewert = 50), einen Heavy Tank (Stärkewert = 30) einen Destroyer (Stärkewert = 10) und 10 Power-Punkte in eine Megamissile tauschen, wenn sich alle in einem Sektor befinden. Die Megamissile wird dann in diesen Sektor gestellt. Für den Fall, dass die Summe der Einheiten 100 Punkte übersteigt, verfallen die restlichen Punkte.
+
+Nachfolgend: Die Befehlsplanung
+Wählen Sie einen Spieler zum Aufsichtsführenden der ersten Runde. Wenn alle bereit sind, sagt der Aufsichtsführende: „Fertig?“, danach (wenn alle bereit sind): „Los!“ Er dreht die Sanduhr um und der Countdown beginnt. Die Spieler haben drei Minuten Zeit. Sie können bis zu fünf Befehle in ihrem Kommandoblock notieren.
+Ein Befehl kann entweder eine Bewegung von Einheiten auf dem Schlachtfeld sowie aus der Reserve in das HQ anordnen oder einen Tausch.
+Während dieser Planungsphase sind Gespräche zwischen den Spielern untersagt. 
+
+Basisregeln der Befehlsplanung
+Die einzelnen Einheiten können im Rahmen der Regeln beliebig kombiniert werden, um die Schlagkraft zu erhöhen.
+Für eine übersichtliche, einfache und nachvollziehbare Schreibweise der Befehle garantieren die vorgeschriebenen Abkürzungen, die sich auf jedem Kommandoblock befinden:
+
+I=Infantry       	R=Regiment             	Y0=Yellow Sector 0   	    
+T=Tank           	H=Heavy Tank          	B2=Blue Sector 2         
+F=Fighter        	B=Bomber                	XI=X Island 	      	   
+D=Destroyer   	C=Cruiser                	WI=West Island              
+M=Missile      	P=PowerUnit             	S4=Sealane 4	    
+X=Exchange   	HQ=Headquarters   	RV=Reserve
+	
+Innerhalb der Planungsphase kann jeder Spieler eine Auszeit beantragen. Daraufhin stoppt der Aufsichtsführende die Uhr und kontrolliert auf einer zweiten Uhr die Einhaltung der 3-Minuten-Auszeit. Diese Zeit kann von allen Spielern zur Befehlsgebung genutzt werden. Nach Ablauf der Auszeit läuft die normale Planungszeit weiter. Nachdem der Aufsichtsführende mit „Stop“ die normale Planungsphase beendet hat, darf keine Auszeit mehr genommen werden.
+Wenn die Planungszeit um ist, müssen die Spieler ihre Befehlsgebung einstellen. Es werden nur schriftliche Befehle ausgeführt. Notiert ein Spieler einen nicht erlaubten Befehl, und wird dies erst nach Ablauf der Planungszeit festgestellt, so wird dieser Befehl ungültig, gilt als nicht erteilt und darf nicht durch einen neuen ersetzt werden. 
+Hier ein Beispiel, wie eine Liste mit fünf Befehlen aussehen könnte:
+
+Piece	From	To
+D	S12	WI	>>> Destroyer fährt von Seeweg 12 nach West-Insel
+T	Y4	XI	>>>Tank fährt von Yellow(gelb) Sektor 4 nach X-Insel
+T	B2	B1	>>>Tank fährt von Blue (blau) Sektor 2 nach Blauem Sektor 1
+B	G4	B0	>>>Bomber fliegt von Green (grün) Sektor 4 nach Blue Sektor 0
+2P	XRV	I	>>>2 Power-Punkte werden in der RESERVE gegen eine Infanterie			ausgetauscht
+
+Einheiten dürfen nur einmal pro Runde bewegt werden.
+Einheiten dürfen in einer Runde bewegt und dann gegen höherwertige ausgetauscht werden. Dazu sind jedoch  separate Befehle notwendig (1.: Bewegung: 2.: Austausch). Die neu entstandenen Einheiten dürfen erst in der nächsten Runde bewegt werden. 
+Die Spieler können drei kleine Einheiten gegen eine große Einheit des gleichenTyps eintauschen, sofern sich diese drei im selben Sektor oder in der RESERVE befinden, z.B. 3xInfantry gegen Regiment; 3xTank gegen Heavy Tank; 3xFighter gegen Bomber; 3xDestroyer gegen Cruiser.
+ACHTUNG: Jeder Tausch gilt als ein Befehl, der als solcher in den Kommandoblock einzutragen ist. Der Tausch in größere Einheiten erhöht den Punktewert auf mehr als die bloße Summe und ermöglicht den Spielern, mit weniger Befehlen größere Punktstärken auf dem Schlachtfeld zu navigieren.
+Beispiel: Um aus sechs Power-Punkten ein Regiment zu machen, benötigt man vier Befehle:
+
+Piece	From	To
+2P	XRV	I	
+2P	XRV	I	
+2P	XRV	I	
+3I	XRV	R	
+2P	XRV	I	>>> Der fünfte Befehl bewegt das Regiment aus der RESERVE ins HQ.
+
+Reserveeinheiten können in einer Runde nur bis zum HQ bewegt werden. Sie können in der Reserve ausgetauscht werden und in derselben Runde ins HQ bewegt werden.
+Einheiten können nicht in die Reserve zurück bewegt werden. Es ist möglich, zunächst Power-Punkte gegen   kleine Einheiten (z.B. Destroyer) auszutauschen, um diese dann in derselben Runde gegen eine große Einheit  (z.B. Cruiser) auszutauschen. Jeder Tausch erfordert einen separaten Befehl. In der gleichen Runde kann  diese Einheit auch  ins HQ befohlen werden.
+Hat ein Spieler keinen gültigen Befehl erteilt, wird dies mit Abgabe eines Power-Punktes bestraft. Hat der Spieler keine Power-Punkte in seiner RESERVE, so löst er die kleinste verfügbare Einheit auf dem Spielfeld oder in der RESERVE in Power-Punkte auf und legt nach Abzug eines Punktes die restlichen in die RESERVE.
+
+Regeln für die Ausführung von Befehlen
+
+Der Aufsichtsführende liest als erster die Befehle seines rechten Nachbarn vor und führt diese gleichzeitig auf dem Feld aus. Dann geht es weiter  im Uhrzeigersinn. Befehle werden von oben nach unten eingetragen und auch so vorgelesen sowie ausgeführt. Auf Anfrage eines Spielers muss ihm Einblick in den Kommandoblock gewährt werden.
+Nach Ablauf der Planungszeit und der Ausführung der Befehle werden als nächstes bestehende Gefechte aufgelöst. Ein Gefecht besteht dann, wenn sich Einheiten unterschiedlicher Farbe im selben Sektor befinden. Nun werden die  (kombinierten) Stärken der Gegner miteinander verglichen. Der Spieler mit der höheren Gesamtstärke übernimmt alle schwächeren gegnerischen Einheiten, indem er sie in seine eigene Farbe umwandelt und sie dann in die Reserve stellt. Übernommene Einheiten, die nicht mehr in der eigenen Farbe zur Verfügung stehen, gehen verloren und werden nicht durch minderwertige ersetzt.
+Unentschieden
+Ist ein Gefecht nach Ausführung aller Befehle unentschieden, werden die betroffenen Einheiten jeweils in die Sektoren versetzt, von denen sie kamen. Hat sich eine Einheit in dieser Runde nicht bewegt, bleibt sie in diesem Sektor. Kommt es durch eine Rückversetzung von Einheiten in ihren alten Sektor dort zu einem Gefecht mit anderen, dorthin bewegten Einheiten, wird dieses wie ein normales aufgelöst. Ist ein solches Gefecht unentschieden, werden nur die neu angekommenen Einheiten in ihren alten Sektor versetzt. Eine Einheit kann nur einmal pro Runde zurückversetzt werden.
+Sind mehr als zwei Spieler in ein Gefecht verwickelt, und die zwei stärksten Parteien sind gleich, werden diese zurückversetzt, während die schwächere dritte in dem Sektor verbleibt. 
+Befinden sich vier Parteien in einem Sektor, und die zwei stärksten sind gleich, werden diese zurückversetzt, während die anderen zwei das Gefecht austragen. Endet auch dieses unentschieden, werden sie zurückversetzt, woher sie kamen.
+Es ist erlaubt das gegnerische HQ anzugreifen, jedoch kann man die Fahne nur mit Infanterie oder einem Regiment erobern.
+
+Chartern und Abfeuern einer Megamissile
+Megamissiles können zu jeder Zeit aus jeder Kombination von eigenen Einheiten hergestellt werden. Die Gesamtpunktstärke muss = 100 oder mehr betragen, um einen Austausch vorzunehmen. Dazu müssen sich natürlich alle diese Einheiten in einem Sektor befinden. Sie können in derselben Runde dorthin bewegt worden sein. In der gleichen Runde ist es auch möglich, die Megamissile abzuschießen. 
+Der Befehl wird wie für eine Bewegung erteilt, unter "To" wird der Zielsektor angegeben. Für überzählige Punktstärke beim Austausch der Einheiten zur Megamissile gibt es keinen Ausgleich. 
+Die Megamissile kann auf jeden Sektor des Feldes abgeschossen werden - auch auf HQs, Reserven und den Abschusssektor selbst. Nach dem Einsatz ist die Megamissile zerstört und mit ihr alle Einheiten in dem Zielsektor. Diese werden aus dem Spiel genommen. 
+Eine Flagge ist von der Megamissile nicht betroffen. Ein Spieler kann während eines Spiels so viele Megamissiles herstellen und abfeuern, wie er will. 
+Eine Megamissile hat nur Angriffswert. Ihr Verteidigungswert ist 0. Sie kann also durch gegnerische Einheiten vereinnahmt werden, sofern sie nicht abgefeuert wurde. Sie wird dann in die Reserve gestellt und muss von dort abgefeuert werden, weil ansonsten mit Megamissiles keine Bewegungen auf dem Feld durchgeführt werden können. Werden mehrere Megamissiles auf den gleichen Sektor abgefeuert, so sind alle zerstört mit allen darin befindlichen Einheiten. Megamissiles können aus der Reserve abgeschossen werden und diese auch zum Ziel haben. 
+
+Handhabung von Powerpunkten
+Power-Punkte sind die Basis zur Erweiterung aller Streitkräfte. Sie werden während des Spiels erworben, wenn ein Spieler mit seinen Einheiten am Ende einer Runde gegnerische Sektoren besetzt hält. Pro Land, das nicht das eigene ist, erhält man einen Power-Punkt, egal, wie viele Sektoren man besetzt hat. 
+Insgesamt kann man maximal 10 PowerUnits sammeln, Ansprüche auf weitere verfallen ohne Ersatz.
+Diese Power-Punkte kommen nicht in der Schlacht zum Einsatz, sondern dienen zum Austausch für kleine Einheiten. Für eine Infanterieeinheit braucht man zwei Power-Punkte, für einen Tank drei, für einen Fighter fünf und für einen Destroyer zehn - also genauso viel wie deren jeweilige Stärke. 
+Man erhält keine Power-Punkte für die Besetzung von Sektoren des eigenen Kontinents; für besetzte Sektoren auf Ländern ohne Flagge; für besetzte Inseln und Seewege
+
+ÜBERNAHME VON FLAGGEN
+
+Gefechte in HQs werden erst am Schluss einer Runde aufgelöst. Eine Flagge gilt dann als gefallen und übernommen, wenn mindestens eine Infanterie oder ein Regiment das gegnerische HQ besetzt und die Gesamtpunktstärke des Angreifers im gegnerischen HQ höher ist als die des Verteidigers. Der Name des Verfassers der deutschen Regelfassung ergibt sich aus den Anfangsbuchstaben der unterstrichenen Überschriften in diesem Dokument. Die Flagge wird in das Sieger-HQ gebracht, der Sieger übernimmt alle verbleibenden Streitkräfte des Verlierers, der ausscheidet, in seine Farbe. Hierbei werden nur solche Einheiten berücksichtigt, die dem Sieger in seiner eigenen Farbe zur direkten Umwandlung zur Verfügung stehen.
+Erobern gegnerische Parteien in derselben Runde gegenseitig das HQ des anderen, scheiden beide aus. Die Flaggen beider Spieler werden vom Spielfeld entfernt. 
+Dritte erhalten nur noch Power-Punkte auf dem Land einer übernommenen Partei in der Runde der Übernahme. Übernimmt ein Spieler das HQ eines anderen und wird in derselben Runde selbst durch einen dritten übernommen, fallen beide Flaggen an den letztgenannten.
+ACHTUNG: Ohne eine Infanterie oder ein Regiment kann die Flagge des Gegners nicht übernommen werden.
+
+ENDE DES SPIELS
+
+Der Sieger ist der Spieler, der alle anderen Flaggen übernimmt. 
+
+REGELN FUER ZWEI SPIELER ODER ZWEI PARTEIEN
+
+die zwei Parteien wählen sich gegenüberliegende Farben
+bei zwei Spielern gibt es sechs Minuten Planungszeit
+bei zwei Spielern pro Partei ist Beratung innerhalb der 3-Minuten-Planungszeit moeglich
+Streitkräfte können kombiniert kämpfen, aber gemischter Tausch ist verboten 
+besiegte Einheiten gehen immer vollständig an die Farbe, die den Hauptanteil am Gefecht hatte - bei Gleichheit muss sich für eine Farbe entschieden werden: Aufteilung ist verboten.
+Power-Punkte werden pro Farbe erworben: pro Farbe sind also bei zwei gegnerischen Kontinenten nur zwei Power-Punkte möglich, also insgesamt vier pro Partei
+es müssen beide gegnerische Flaggen übernommen werden (oder nach vorheriger Absprache mindestens eine nach Ablauf der Zeit)
+
+
+REGELN FUER DREI SPIELER
+die vierte Farbe ist ein Söldnerheer, dessen Dienste jeder der Spieler im Verlauf des Spiels in Anspruch nehmen kann
+Befehle für das Söldnerheer werden im eigenen Kommandoblock eingetragen und sind in den max. 5 Befehlen pro Runde einbegriffen
+ACHTUNG: Es ist wichtig, das vor den benutzten Abkürzungen zusätzlich die Farbe des Söldnerheeres zu kennzeichnen, da sonst die Befehle uneindeutig und damit ungültig sind.
+wollen zwei Spieler gleichzeitig  eine Einheit des Söldnerheeres bewegen oder austauschen, so werden beide Befehle nicht ausgeführt - außer in dem Fall, wenn sie total identisch sind (dann wird eine Einheit diese Typs bewegt, nicht zwei) oder wenn sich zwei Einheiten des gleichen Typs im selben Sektor befinden
+man kann von den fünf Befehlen so viele, wie man will, an das Söldnerheer geben
+es ist erlaubt, Söldnereinheiten absichtlich so zu befehlen, dass man sie selbst übernehmen kann
+solange die Söldnerflagge steht, erhält man für besetzte Sektoren auf diesem Kontinent Power-Punkte
+für das Söldnerheer gelten die normalen Gefechtsregeln
+übernimmt ein Spieler die Söldnerflagge, fallen ihm alle Resteinheiten zu
+
+Turnierspiel
+
+In Turnieren gilt ein Zeitlimit von zwei Stunden. Der Aufsichtsführende sagt die letzte Runde ausdrücklich an. Der Sieger ist der Spieler mit der höchsten Gesamtpunktstärke. Diese setzt sich zusammen aus der Summe der Einheiten auf dem Spielfeld, in der RESERVE und den darin befindlichen Power-Punkten.
+
+Adresse für Fragen, Bestellungen und Ersatzmaterial:
+
+Power Games International
+Copyright © 1981 by Monte B. Young
+Copyright © 1995  Powergames International
+Alle Rechte vorbehalten.
+Hergestellt und vertrieben durch:
+Power Games International
+
+
