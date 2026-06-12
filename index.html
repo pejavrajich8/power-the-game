@@ -109,6 +109,11 @@ table.tiny td:nth-child(2),table.tiny td:nth-child(3),table.tiny td:nth-child(5)
   #side{width:100%; min-width:0; border-left:none; border-top:1px solid #2c3a4d;}
   #side .scroll{overflow:visible;}
 }
+#welcome{position:fixed;right:18px;bottom:18px;z-index:40;background:#16243ae8;border:1px solid #2c456b;
+  border-radius:14px;padding:16px 18px;width:290px;box-shadow:0 10px 40px #000a;backdrop-filter:blur(4px);}
+#welcome input{width:100%;box-sizing:border-box;}
+.gamerow{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#101c30;
+  border:1px solid #2c456b;border-radius:10px;padding:10px 14px;margin:8px 0;}
 </style>
 </head>
 <body>
@@ -663,10 +668,18 @@ async function resolveFlags(){
 
 function gameOver(seat){
   G.over=true; UI.mode="over";
+  let statline="";
+  const prof=PROFILE.load();
+  if(prof){
+    const won=recordResult(seat);
+    const p2=PROFILE.load();
+    statline=`<p class="mini" style="margin:8px 0;">👤 ${won?"Victory recorded for":"Recorded for"} <b>${p2.name}</b> — ${p2.played} played · ${p2.won} won</p>`;
+  }
   showPanel(`
     <h1>POWER</h1>
     <h2 style="font-size:24px;color:#fff;">${seat?seat.name+" conquers the world!":"Mutual annihilation — nobody wins"}</h2>
     <p style="margin:10px 0;">${seat?`The last flag has fallen. Total domination in ${G.round} rounds.`:""}</p>
+    ${statline}
     <button class="btn primary" onclick="location.reload()">Play again</button>`);
 }
 function tournamentScore(){
@@ -715,6 +728,9 @@ function hostGame(opts,name){
         conn.on("close",()=>hostOnClose(conn));
       });
       renderLobby();
+      // advertise this room in the public game browser, with a heartbeat
+      lobbyOpen(()=>lobbyPost());
+      LOBBY.hb=setInterval(lobbyPost,20000);
     });
     peer.on("error",err=>{
       if(err.type==="unavailable-id"&&n<6){ peer.destroy(); attempt(n+1); }
@@ -759,9 +775,10 @@ function hostOnClose(conn){
 }
 function note(msg){ log(msg,"bad"); broadcast({t:"note",msg}); }
 function broadcast(msg){ Object.values(NET.conns).forEach(c=>{ if(c.open) c.send(msg); }); }
-function broadcastLobby(){ broadcast({t:"lobby",names:NET.names,need:NET.opts.players}); if(!NET.started) renderLobby(); }
+function broadcastLobby(){ broadcast({t:"lobby",names:NET.names,need:NET.opts.players}); if(!NET.started){ renderLobby(); if(NET.isHost) lobbyPost(); } }
 function hostStart(){
   NET.started=true;
+  lobbyUnpost();
   const names=[0,1,2,3].map(i=>NET.names[i]||"");
   const opts={players:NET.opts.players,timer:NET.opts.timer,names};
   broadcast({t:"start",opts});
@@ -1048,29 +1065,30 @@ function drawBoard(){
   // countries — organic painted coastlines like the original board art
   C_BLOCKS.forEach((b,bi)=>{
     const cx=X(b.c0)+CELL*1.5, cy=Y(b.r0)+CELL*1.5, hw=CELL*1.5, hh=CELL*1.5;
-    // shallow water halo, sandy beach, then two greens for a painted-relief feel
-    el("path",{d:squareCoast(cx,cy,hw+20,hh+20,bi*31+5,30,9),fill:"#7fb3c4",opacity:".55"});
-    el("path",{d:squareCoast(cx,cy,hw+12,hh+12,bi*31+1,28,8),fill:"#d8c98e"});
-    el("path",{d:squareCoast(cx,cy,hw+5,hh+5,bi*31+2,26,7),fill:"#5b7a40"});
-    el("path",{d:squareCoast(cx,cy,hw,hh,bi*31+3,24,5),fill:"url(#terrain)",stroke:ARMIES[b.army].hex,"stroke-width":3.5});
+    // land sits inset within its sectors so the coastal squares clearly show water,
+    // like the original board — shallow halo, beach, coast band, painted interior
+    el("path",{d:squareCoast(cx,cy,hw+4,hh+4,bi*31+5,30,4),fill:"#7fb3c4",opacity:".55"});
+    el("path",{d:squareCoast(cx,cy,hw-3,hh-3,bi*31+1,28,4),fill:"#d8c98e"});
+    el("path",{d:squareCoast(cx,cy,hw-9,hh-9,bi*31+2,26,4),fill:"#5b7a40"});
+    el("path",{d:squareCoast(cx,cy,hw-15,hh-15,bi*31+3,24,3),fill:"url(#terrain)",stroke:ARMIES[b.army].hex,"stroke-width":3.5});
     // scattered terrain detail: mountain ranges + forest clusters per country
     const tr=rnd(bi*97+7);
     for(let m=0;m<2;m++){
-      const mx=cx+(tr()-.5)*CELL*1.7, my=cy+(tr()-.5)*CELL*1.7;
+      const mx=cx+(tr()-.5)*CELL*1.4, my=cy+(tr()-.5)*CELL*1.4;
       el("use",{href:"#g-mtn",transform:`translate(${mx.toFixed(0)},${my.toFixed(0)}) scale(${(0.65+tr()*0.3).toFixed(2)})`,opacity:".75",style:"pointer-events:none;"});
     }
     for(let f=0;f<5;f++){
-      const fx=cx+(tr()-.5)*CELL*2.4, fy=cy+(tr()-.5)*CELL*2.4;
+      const fx=cx+(tr()-.5)*CELL*1.9, fy=cy+(tr()-.5)*CELL*1.9;
       el("circle",{cx:fx.toFixed(0),cy:fy.toFixed(0),r:(4+tr()*5).toFixed(1),fill:"#4d6e35",opacity:".5",style:"pointer-events:none;"});
     }
   });
   // islands — irregular painted blobs with beach rings
   ["NI","EI","SI","WI","XI"].forEach((iid,ii)=>{
     const a=areas[iid];
-    el("path",{d:islandCoast(a.cx,a.cy,CELL*.6,CELL*.54,ii*53+11,16,.18),fill:"#7fb3c4",opacity:".55"});
-    el("path",{d:islandCoast(a.cx,a.cy,CELL*.52,CELL*.46,ii*53+1,14,.16),fill:"#d8c98e"});
-    el("path",{d:islandCoast(a.cx,a.cy,CELL*.44,CELL*.38,ii*53+2,13,.14),fill:"#5b7a40"});
-    el("path",{d:islandCoast(a.cx,a.cy,CELL*.37,CELL*.31,ii*53+3,12,.12),fill:"url(#terrain)",stroke:"#46612f","stroke-width":2});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.5,CELL*.45,ii*53+11,16,.14),fill:"#7fb3c4",opacity:".55"});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.43,CELL*.38,ii*53+1,14,.13),fill:"#d8c98e"});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.37,CELL*.32,ii*53+2,13,.12),fill:"#5b7a40"});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.31,CELL*.26,ii*53+3,12,.1),fill:"url(#terrain)",stroke:"#46612f","stroke-width":2});
     const tr=rnd(ii*71+3);
     el("circle",{cx:(a.cx+(tr()-.5)*CELL*.4).toFixed(0),cy:(a.cy+(tr()-.5)*CELL*.4).toFixed(0),r:5,fill:"#4d6e35",opacity:".5",style:"pointer-events:none;"});
     el("text",{x:a.cx,y:a.cy+4,"text-anchor":"middle",class:"isllbl"}).textContent=iid;
@@ -1474,9 +1492,165 @@ function rulesPanel(){
   <p class="mini" style="margin-top:8px;">Adapted from the official Power Games International rulebook (1981/1995). Saved alongside this file as original-rules.txt.</p>`);
 }
 
+/* ---------------- player profile (stored in this browser) ---------------- */
+const PROFILE={
+  load(){ try{ return JSON.parse(localStorage.getItem("power-profile"))||null; }catch(e){ return null; } },
+  save(p){ try{ localStorage.setItem("power-profile",JSON.stringify(p)); }catch(e){} },
+  clear(){ try{ localStorage.removeItem("power-profile"); }catch(e){} }
+};
+function recordResult(winnerSeat){
+  const p=PROFILE.load(); if(!p) return false;
+  let won=false;
+  if(winnerSeat){
+    if(NET.mode==="online") won=G.seats.indexOf(winnerSeat)===NET.mySeat;
+    else won=winnerSeat.name===p.name;
+  }
+  p.played=(p.played||0)+1; if(won) p.won=(p.won||0)+1;
+  PROFILE.save(p);
+  return won;
+}
+
+/* ---------------- game discovery (P2P lobby registry) ----------------
+   No server: the first player online claims a well-known peer id and acts
+   as the matchmaking registry. Hosts post their open rooms to it with a
+   heartbeat; the "Find games" browser queries it. If the registry holder
+   leaves, the next host heartbeat re-registers with whoever claims it next. */
+const LOBBY_ID="power-1981-lobby-v1";
+let LOBBY={peer:null,isReg:false,games:{},conn:null,hb:null};
+function lobbyServe(peer){
+  LOBBY.isReg=true;
+  peer.on("connection",c=>{
+    c.on("data",d=>{
+      if(d.t==="post"&&d.game&&d.game.code) LOBBY.games[d.game.code]={...d.game,ts:Date.now(),_c:c};
+      if(d.t==="unpost") delete LOBBY.games[d.code];
+      if(d.t==="list") c.send({t:"games",games:lobbyList()});
+    });
+    c.on("close",()=>{ for(const k in LOBBY.games) if(LOBBY.games[k]._c===c) delete LOBBY.games[k]; });
+  });
+}
+function lobbyList(){ const now=Date.now();
+  return Object.values(LOBBY.games).filter(g=>now-g.ts<90000)
+    .map(({code,host,need,joined})=>({code,host,need,joined})); }
+function lobbyOpen(cb){
+  if(LOBBY.peer&&!LOBBY.peer.destroyed&&(LOBBY.isReg||(LOBBY.conn&&LOBBY.conn.open))){ cb&&cb(); return; }
+  if(!window.Peer){ renderGameList(null); return; }
+  const peer=new Peer(LOBBY_ID);
+  LOBBY.peer=peer;
+  peer.on("open",()=>{ lobbyServe(peer); cb&&cb(); });
+  peer.on("error",err=>{
+    if(err.type==="unavailable-id"){ // someone else holds the registry — connect as a client
+      const p2=new Peer(); LOBBY.peer=p2;
+      p2.on("open",()=>{
+        LOBBY.conn=p2.connect(LOBBY_ID,{reliable:true});
+        LOBBY.conn.on("open",()=>cb&&cb());
+        LOBBY.conn.on("data",d=>{ if(d.t==="games") renderGameList(d.games); });
+        LOBBY.conn.on("close",()=>{ LOBBY.conn=null; });
+      });
+      p2.on("error",()=>{ if(!LOBBY.isReg) renderGameList(null); });
+    } else if(!LOBBY.isReg&&err.type!=="peer-unavailable") renderGameList(null);
+  });
+}
+function lobbyQuery(){
+  if(LOBBY.isReg) renderGameList(lobbyList());
+  else if(LOBBY.conn&&LOBBY.conn.open) LOBBY.conn.send({t:"list"});
+  else lobbyOpen(()=>lobbyQuery());
+}
+function lobbyPost(){
+  if(!NET.room||NET.started) return;
+  const game={code:NET.room,host:NET.myName,need:NET.opts.players,joined:Object.keys(NET.names).length};
+  if(LOBBY.isReg) LOBBY.games[game.code]={...game,ts:Date.now()};
+  else if(LOBBY.conn&&LOBBY.conn.open) LOBBY.conn.send({t:"post",game});
+  else lobbyOpen(()=>{ if(NET.room&&!NET.started){
+    const g2={code:NET.room,host:NET.myName,need:NET.opts.players,joined:Object.keys(NET.names).length};
+    if(LOBBY.isReg) LOBBY.games[g2.code]={...g2,ts:Date.now()};
+    else if(LOBBY.conn&&LOBBY.conn.open) LOBBY.conn.send({t:"post",game:g2}); }});
+}
+function lobbyUnpost(){
+  if(LOBBY.hb){ clearInterval(LOBBY.hb); LOBBY.hb=null; }
+  if(!NET.room) return;
+  if(LOBBY.isReg) delete LOBBY.games[NET.room];
+  else if(LOBBY.conn&&LOBBY.conn.open) LOBBY.conn.send({t:"unpost",code:NET.room});
+}
+function esc(s){ return String(s||"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c])); }
+function lobbyBrowser(){
+  showPanel(`<h1>Open games</h1>
+    <p class="mini">Anyone hosting an online game right now shows up here.</p>
+    <div id="gamelist"><p>Searching for open games…</p></div>
+    <div style="margin-top:14px;">
+      <button class="btn" id="refreshg">↻ Refresh</button>
+      <button class="btn primary" id="backw">Back</button>
+    </div>`);
+  document.getElementById("refreshg").onclick=()=>{ document.getElementById("gamelist").innerHTML="<p>Searching…</p>"; lobbyQuery(); };
+  document.getElementById("backw").onclick=()=>{ hidePanel(); welcomeBar(true); };
+  lobbyOpen(()=>lobbyQuery());
+  setTimeout(()=>{ const g=document.getElementById("gamelist");
+    if(g&&/Searching/.test(g.textContent)) renderGameList(LOBBY.isReg?lobbyList():null); },8000);
+}
+function renderGameList(games){
+  const elx=document.getElementById("gamelist"); if(!elx) return;
+  if(games===null){ elx.innerHTML=`<p>Couldn't reach the matchmaking network — check your internet, or join directly with a room code.</p>`; return; }
+  if(!games.length){ elx.innerHTML=`<p>No open games right now. Host one — it'll show up here for everyone else.</p>`; return; }
+  elx.innerHTML=games.map(g=>`<div class="gamerow">
+      <span><b>${esc(g.host)||"?"}</b>'s war &nbsp;·&nbsp; room <b>${esc(g.code)}</b> &nbsp;·&nbsp; ${g.joined}/${g.need} players</span>
+      <button class="btn primary" data-code="${esc(g.code)}" ${g.joined>=g.need?"disabled":""}>${g.joined>=g.need?"Full":"Join"}</button>
+    </div>`).join("");
+  elx.querySelectorAll("button[data-code]").forEach(b=>b.onclick=()=>{
+    const p=PROFILE.load();
+    welcomeBar(false);
+    joinGame(b.getAttribute("data-code"), p?p.name:"Guest");
+  });
+}
+
+/* ---------------- welcome card (board stays visible behind it) ---------------- */
+function welcomeBar(show){
+  let w=document.getElementById("welcome");
+  if(show===false){ if(w) w.remove(); return; }
+  if(!w){ w=document.createElement("div"); w.id="welcome"; document.body.appendChild(w); }
+  const p=PROFILE.load();
+  let fav=p?p.fav:0;
+  w.innerHTML=`
+    <div style="font-weight:900;font-style:italic;font-size:22px;letter-spacing:.12em;color:#eaf6ff;text-shadow:0 0 12px #2d7fd6;">POWER</div>
+    <div class="mini" style="letter-spacing:.22em;margin-bottom:10px;">THE BOARD GAME · 1981</div>
+    ${p?`<div class="mini" style="margin:8px 0;line-height:1.6;">👤 <b style="color:#fff;">${esc(p.name)}</b>
+        &nbsp;<a href="#" id="signout" style="color:#7e93ad;">sign out</a><br>
+        ${p.played||0} played · ${p.won||0} won · favourite
+        <b style="color:${ARMIES[p.fav??0].hex};">${ARMIES[p.fav??0].name}</b></div>`
+     :`<div class="mini" style="margin-bottom:4px;">Sign in to track your wins (saved in this browser):</div>
+       <input type="text" id="pfname" maxlength="18" placeholder="Your name" style="margin:4px 0;">
+       <div class="segs" id="favseg" style="margin:4px 0;">
+         ${ARMIES.map((a,i)=>`<div class="seg ${i===0?"on":""}" data-f="${i}" style="color:${a.hex};font-weight:800;">${a.name}</div>`).join("")}
+       </div>
+       <button class="btn" id="signin" style="margin-bottom:4px;">Sign in</button>`}
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn primary" id="wplay" style="font-size:15px;">▶ Play</button>
+      <button class="btn" id="wfind">🔍 Find games</button>
+      <button class="btn" id="wrules">Rules</button>
+    </div>
+    <p class="mini" style="margin-top:10px;">Have a look around the board — the war starts when you do.</p>`;
+  if(p){
+    document.getElementById("signout").onclick=(e)=>{ e.preventDefault(); PROFILE.clear(); welcomeBar(true); };
+  }else{
+    w.querySelectorAll("#favseg .seg").forEach(s=>s.onclick=()=>{
+      w.querySelectorAll("#favseg .seg").forEach(x=>x.classList.remove("on"));
+      s.classList.add("on"); fav=+s.getAttribute("data-f");
+    });
+    document.getElementById("signin").onclick=()=>{
+      const name=document.getElementById("pfname").value.trim();
+      if(!name){ flash("Type a name first"); return; }
+      PROFILE.save({name,fav,played:0,won:0});
+      welcomeBar(true);
+    };
+  }
+  document.getElementById("wplay").onclick=()=>setupScreen();
+  document.getElementById("wfind").onclick=()=>lobbyBrowser();
+  document.getElementById("wrules").onclick=()=>{ rulesPanel();
+    document.querySelector("#overlaypanel .btn.primary").onclick=()=>{ hidePanel(); }; };
+}
+
 /* ---------------- setup ---------------- */
 function setupScreen(){
-  let players=4, timer=false, names=["","","",""], mode="hot", myName="", code="";
+  const prof=PROFILE.load();
+  let players=4, timer=false, names=[prof?prof.name:"","","",""], mode="hot", myName=prof?prof.name:"", code="";
   const draw=()=>{
     const seatLabel=i=>players===2?(i===0?"Red + Black":"Yellow + White"):ARMIES[i].name;
     showPanel(`
@@ -1509,6 +1683,7 @@ function setupScreen(){
       <div style="margin-top:18px;">
         <button class="btn primary" id="startbtn" style="font-size:16px;padding:10px 26px;">${mode==="hot"?"Start the war":mode==="host"?"Create room":"Join room"}</button>
         <button class="btn" id="rules0">Rules</button>
+        <button class="btn" id="back0">👀 Back to the board</button>
       </div>
       ${mode!=="hot"?`<p class="mini" style="margin-top:10px;">Online play is free peer-to-peer — everyone plans their secret orders at the same time on their own device.</p>`:""}`);
     const grab=id=>document.getElementById(id);
@@ -1519,7 +1694,9 @@ function setupScreen(){
     document.querySelectorAll("#pseg .seg").forEach(s=>s.onclick=()=>{players=+s.getAttribute("data-n"); draw();});
     document.querySelectorAll("#tseg .seg").forEach(s=>s.onclick=()=>{timer=s.getAttribute("data-t")==="1"; draw();});
     grab("rules0").onclick=()=>{rulesPanel(); document.querySelector("#overlaypanel .btn.primary").onclick=draw;};
+    grab("back0").onclick=()=>{ hidePanel(); welcomeBar(true); };
     grab("startbtn").onclick=()=>{
+      welcomeBar(false);
       if(mode==="hot"){
         for(let i=0;i<players;i++) names[i]=grab("nm"+i).value.trim();
         newGame({players,timer,names});
@@ -1556,7 +1733,8 @@ document.getElementById("speedbtn").onclick=()=>{
   document.getElementById("speedbtn").textContent=UI.speed===1?"🐢 1×":"🐇 5×";
 };
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ deselect(); renderAll(); } });
-setupScreen();
+hidePanel();
+welcomeBar(true);
 
 /* debug hooks */
 window.PWR={get G(){return G;},get PG(){return PG;},areas,landAdj,seaAdj,legalDests,TYPES,
