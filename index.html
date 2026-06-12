@@ -975,6 +975,37 @@ const SVGNS="http://www.w3.org/2000/svg";
 function el(tag,attrs,parent){ const e=document.createElementNS(SVGNS,tag);
   for(const k in attrs)e.setAttribute(k,attrs[k]); (parent||svg).appendChild(e); return e; }
 
+/* deterministic organic coastlines, like the painted landmasses on the real board */
+function rnd(seed){ let s=seed*7919+13; return ()=>{ s=(s*9301+49297)%233280; return s/233280; }; }
+function smoothClose(pts){
+  const n=pts.length; let d="";
+  for(let i=0;i<n;i++){
+    const p0=pts[(i-1+n)%n],p1=pts[i],p2=pts[(i+1)%n],p3=pts[(i+2)%n];
+    const c1x=p1[0]+(p2[0]-p0[0])/6, c1y=p1[1]+(p2[1]-p0[1])/6;
+    const c2x=p2[0]-(p3[0]-p1[0])/6, c2y=p2[1]-(p3[1]-p1[1])/6;
+    if(!i) d=`M${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`;
+    d+=`C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d+"Z";
+}
+function squareCoast(cx,cy,hw,hh,seed,n,amp){ // wobbly outline that always contains the sector grid
+  const r=rnd(seed), pts=[], corner=Math.hypot(hw,hh);
+  for(let i=0;i<n;i++){
+    const a=i/n*2*Math.PI, ca=Math.cos(a), sa=Math.sin(a);
+    const base=Math.min(hw/Math.max(1e-4,Math.abs(ca)), hh/Math.max(1e-4,Math.abs(sa)), corner);
+    const rad=base+2+r()*amp;
+    pts.push([cx+ca*rad, cy+sa*rad]);
+  }
+  return smoothClose(pts);
+}
+function islandCoast(cx,cy,rx,ry,seed,n,j){
+  const r=rnd(seed), pts=[];
+  for(let i=0;i<n;i++){
+    const a=i/n*2*Math.PI, k=1+(r()*2-1)*j;
+    pts.push([cx+Math.cos(a)*rx*k, cy+Math.sin(a)*ry*k]);
+  }
+  return smoothClose(pts);
+}
 function drawBoard(){
   svg.innerHTML="";
   const defs=el("defs",{});
@@ -983,10 +1014,14 @@ function drawBoard(){
      <path d="M0 13 q 6 -7 12 0 t 12 0 t 12 0 t 12 0" stroke="#ffffff33" fill="none" stroke-width="2"/>
    </pattern>
    <pattern id="terrain" width="60" height="60" patternUnits="userSpaceOnUse">
-     <rect width="60" height="60" fill="#7a9e56"/>
-     <circle cx="14" cy="18" r="7" fill="#71924f"/><circle cx="44" cy="40" r="9" fill="#83a85f"/>
-     <circle cx="30" cy="55" r="5" fill="#6f9050"/><circle cx="52" cy="10" r="5" fill="#8aa86a"/>
+     <rect width="60" height="60" fill="#7fa257"/>
+     <circle cx="14" cy="18" r="7" fill="#71924f"/><circle cx="44" cy="40" r="9" fill="#88ad62"/>
+     <circle cx="30" cy="55" r="5" fill="#6f9050"/><circle cx="52" cy="10" r="5" fill="#90ae6e"/>
+     <circle cx="8" cy="44" r="6" fill="#9b8a5c" opacity=".45"/><circle cx="38" cy="6" r="5" fill="#9b8a5c" opacity=".35"/>
+     <path d="M2 30 q8 -5 16 0" stroke="#6a8b4a" stroke-width="1.5" fill="none" opacity=".6"/>
+     <path d="M34 24 q7 -4 14 0" stroke="#6a8b4a" stroke-width="1.5" fill="none" opacity=".6"/>
    </pattern>
+   <g id="g-mtn"><path d="M-20 12 L-6 -12 L2 -2 L10 -10 L24 12 Z" fill="#8d7f57"/><path d="M-6 -12 L-2.5 -5.5 L-9.5 -4.5 Z" fill="#f1ede0"/><path d="M10 -10 L13 -4.5 L6.5 -4.5 Z" fill="#f1ede0"/></g>
    <radialGradient id="boomg"><stop offset="0%" stop-color="#fff8c8"/><stop offset="35%" stop-color="#ffb300"/><stop offset="75%" stop-color="#e23c0e"/><stop offset="100%" stop-color="#e23c0e" stop-opacity="0"/></radialGradient>
    <filter id="glowf" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
    <g id="g-I"><circle cy="-7" r="4.4"/><path d="M-4 -1 h8 l1.4 9 a2 2 0 0 1 -2 2 h-6.8 a2 2 0 0 1 -2 -2 z"/></g>
@@ -1010,20 +1045,36 @@ function drawBoard(){
   el("rect",{x:MG-4,y:MG-4,width:CELL*9+8,height:CELL*9+8,fill:"var(--water2)",stroke:"#33607a","stroke-width":2});
   el("rect",{x:MG-4,y:MG-4,width:CELL*9+8,height:CELL*9+8,fill:"url(#waves)"});
   const X=(c)=>MG+c*CELL, Y=(r)=>MG+r*CELL;
-  // countries (sand beach ring under the terrain)
-  for(const b of C_BLOCKS){
-    el("rect",{x:X(b.c0)-11,y:Y(b.r0)-11,width:CELL*3+22,height:CELL*3+22,rx:14,fill:"#d3c48b"});
-    el("rect",{x:X(b.c0)-6,y:Y(b.r0)-6,width:CELL*3+12,height:CELL*3+12,rx:10,fill:"#5b7a40"});
-    el("rect",{x:X(b.c0)-2,y:Y(b.r0)-2,width:CELL*3+4,height:CELL*3+4,rx:7,fill:"url(#terrain)",stroke:ARMIES[b.army].hex,"stroke-width":3});
-  }
-  // islands (sand beach ring)
-  for(const iid of ["NI","EI","SI","WI","XI"]){
+  // countries — organic painted coastlines like the original board art
+  C_BLOCKS.forEach((b,bi)=>{
+    const cx=X(b.c0)+CELL*1.5, cy=Y(b.r0)+CELL*1.5, hw=CELL*1.5, hh=CELL*1.5;
+    // shallow water halo, sandy beach, then two greens for a painted-relief feel
+    el("path",{d:squareCoast(cx,cy,hw+20,hh+20,bi*31+5,30,9),fill:"#7fb3c4",opacity:".55"});
+    el("path",{d:squareCoast(cx,cy,hw+12,hh+12,bi*31+1,28,8),fill:"#d8c98e"});
+    el("path",{d:squareCoast(cx,cy,hw+5,hh+5,bi*31+2,26,7),fill:"#5b7a40"});
+    el("path",{d:squareCoast(cx,cy,hw,hh,bi*31+3,24,5),fill:"url(#terrain)",stroke:ARMIES[b.army].hex,"stroke-width":3.5});
+    // scattered terrain detail: mountain ranges + forest clusters per country
+    const tr=rnd(bi*97+7);
+    for(let m=0;m<2;m++){
+      const mx=cx+(tr()-.5)*CELL*1.7, my=cy+(tr()-.5)*CELL*1.7;
+      el("use",{href:"#g-mtn",transform:`translate(${mx.toFixed(0)},${my.toFixed(0)}) scale(${(0.65+tr()*0.3).toFixed(2)})`,opacity:".75",style:"pointer-events:none;"});
+    }
+    for(let f=0;f<5;f++){
+      const fx=cx+(tr()-.5)*CELL*2.4, fy=cy+(tr()-.5)*CELL*2.4;
+      el("circle",{cx:fx.toFixed(0),cy:fy.toFixed(0),r:(4+tr()*5).toFixed(1),fill:"#4d6e35",opacity:".5",style:"pointer-events:none;"});
+    }
+  });
+  // islands — irregular painted blobs with beach rings
+  ["NI","EI","SI","WI","XI"].forEach((iid,ii)=>{
     const a=areas[iid];
-    el("ellipse",{cx:a.cx,cy:a.cy,rx:CELL*.52,ry:CELL*.46,fill:"#d3c48b"});
-    el("ellipse",{cx:a.cx,cy:a.cy,rx:CELL*.46,ry:CELL*.4,fill:"#5b7a40"});
-    el("ellipse",{cx:a.cx,cy:a.cy,rx:CELL*.4,ry:CELL*.34,fill:"url(#terrain)",stroke:"#46612f","stroke-width":2});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.6,CELL*.54,ii*53+11,16,.18),fill:"#7fb3c4",opacity:".55"});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.52,CELL*.46,ii*53+1,14,.16),fill:"#d8c98e"});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.44,CELL*.38,ii*53+2,13,.14),fill:"#5b7a40"});
+    el("path",{d:islandCoast(a.cx,a.cy,CELL*.37,CELL*.31,ii*53+3,12,.12),fill:"url(#terrain)",stroke:"#46612f","stroke-width":2});
+    const tr=rnd(ii*71+3);
+    el("circle",{cx:(a.cx+(tr()-.5)*CELL*.4).toFixed(0),cy:(a.cy+(tr()-.5)*CELL*.4).toFixed(0),r:5,fill:"#4d6e35",opacity:".5",style:"pointer-events:none;"});
     el("text",{x:a.cx,y:a.cy+4,"text-anchor":"middle",class:"isllbl"}).textContent=iid;
-  }
+  });
   // HQs — big corner command pads
   for(let i=0;i<4;i++){
     const a=areas[hqOf(i)], pd=a.pad;
@@ -1149,7 +1200,7 @@ function renderPieces(st){
       const [x,y]=slotFor(st,p,i,n);
       const kind=areas[p.a].kind;
       const dense=(kind==="hq")?(n>12?0.8:1):(kind==="reserve")?1:(n>6?0.62:n>4?0.74:1);
-      const scale=(["R","H","B","C","M","FLAG"].includes(p.t)?1.0:0.8)*dense;
+      const scale=(["R","H","B","C","M","FLAG"].includes(p.t)?1.15:0.95)*dense;
       if(!g){
         g=el("g",{id:"pc-"+p.id,class:"piece ghost","data-pid":p.id},layer);
         el("circle",{r:16,fill:"#fff","fill-opacity":"0",stroke:"none"},g); // generous tap target
