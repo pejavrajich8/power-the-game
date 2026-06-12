@@ -1031,8 +1031,8 @@ function drawBoard(){
     el("rect",{x:pd.x,y:pd.y,width:pd.w,height:pd.h,rx:14,fill:ARMIES[i].hex,stroke:"#00000066","stroke-width":3});
     el("circle",{cx:a.cx,cy:a.cy+8,r:46,fill:"none",stroke:ARMIES[i].text,"stroke-width":1.6,
       "stroke-dasharray":"7 6",opacity:".35"});
-    const left=(i===0||i===3), top=(i<2);
-    el("text",{x:left?pd.x+12:pd.x+pd.w-12, y:top?pd.y+22:pd.y+pd.h-11,
+    const left=(i===0||i===3);
+    el("text",{x:left?pd.x+12:pd.x+pd.w-12, y:pd.y+22,
       "text-anchor":left?"start":"end", fill:ARMIES[i].text,
       style:"font-size:13px;font-weight:900;letter-spacing:.12em;pointer-events:none;"})
       .textContent=ARMIES[i].name.toUpperCase()+" HQ";
