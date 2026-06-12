@@ -409,6 +409,10 @@ function applyCmd(st,cmd){ // returns {ok, info} and mutates st
 function addCommand(cmd){
   const seat=UI.planSeat;
   if(seatCmds(seat).length>=G.cmdLimit){ flash("Command pad is full"); return; }
+  // official 2-player rule: ten commands per round, but five for each colour
+  if(G.mode===2&&seatCmds(seat).filter(c=>c.army===cmd.army).length>=5){
+    flash("Five commands per colour — use your other army"); return;
+  }
   cmd.seat=seat;
   // online: new pieces get seat-namespaced ids so every client agrees on them
   if(NET.mode==="online"&&(cmd.kind==="buy"||cmd.kind==="exch3"||cmd.kind==="mega"))
@@ -897,7 +901,7 @@ function passScreen(){
     <h1>POWER</h1>
     <p class="mini" style="margin-top:6px;">Round ${G.round} · pass the device — no peeking!</p>
     <div class="passname" style="color:${ARMIES[s.armies[0]].hex==="#2b2b30"?"#9aa":ARMIES[s.armies[0]].hex};">${s.name}${isOff?" — Official":""}</div>
-    <p>Plan up to <b>${G.cmdLimit}</b> commands${G.useTimer?` in <b>${G.planTime/60} minutes</b>`:""}.
+    <p>Plan up to <b>${G.cmdLimit}</b> commands${G.mode===2?" (five per colour)":""}${G.useTimer?` in <b>${G.planTime/60} minutes</b>`:""}.
        Your orders stay hidden until everyone has planned.</p>
     <p class="mini" style="margin:8px 0;">Armies: ${s.armies.map(a=>ARMIES[a].name).join(" + ")}${G.mode===3?" (anyone may also command the Black mercenaries)":""}</p>
     <button class="btn primary" id="beginplan">Begin planning</button>`);
@@ -1220,7 +1224,11 @@ function renderPad(){
   if(UI.mode==="plan"||UI.mode==="wait"){
     const mine=seatCmds(UI.planSeat);
     document.getElementById("padowner").textContent=(G.seats[UI.planSeat]?G.seats[UI.planSeat].name:"").toUpperCase();
-    document.getElementById("cmdcount").textContent=mine.length+" / "+G.cmdLimit;
+    let cnt=mine.length+" / "+G.cmdLimit;
+    if(G.mode===2&&G.seats[UI.planSeat]){
+      cnt=G.seats[UI.planSeat].armies.map(a=>ARMIES[a].key+" "+mine.filter(c=>c.army===a).length+"/5").join(" · ");
+    }
+    document.getElementById("cmdcount").textContent=cnt;
     const locked=UI.mode==="wait";
     document.getElementById("cmdlist").innerHTML =
       Array.from({length:G.cmdLimit},(_,i)=>{
@@ -1407,7 +1415,7 @@ function setupScreen(){
         <div class="segs" id="pseg">
           ${[2,3,4].map(n=>`<div class="seg ${players===n?"on":""}" data-n="${n}">${n} players</div>`).join("")}
         </div>
-        <p class="mini" style="margin-top:4px;">${players===2?"Each player commands two adjacent countries (10 commands/round).":players===3?"The fourth country fights as mercenaries — anyone may command them.":"Four countries, every player for himself."}</p>`:""}
+        <p class="mini" style="margin-top:4px;">${players===2?"Each player commands two adjacent countries (10 commands/round, five per colour).":players===3?"The fourth country fights as mercenaries — anyone may command them.":"Four countries, every player for himself."}</p>`:""}
       ${mode==="hot"?Array.from({length:players},(_,i)=>`<label>Player ${i+1} (${seatLabel(i)})</label>
         <input type="text" id="nm${i}" placeholder="${players===2?"Player "+(i+1):ARMIES[i].name}" value="${names[i]||""}">`).join(""):""}
       ${mode!=="hot"?`<label>Your name</label>
