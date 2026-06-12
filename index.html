@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>POWER — The Game (1981)</title>
 <style>
 :root{
@@ -96,6 +97,18 @@ svg .boom{pointer-events:none;}
 #bigmsg.show{opacity:1;}
 .mini{font-size:11.5px; color:#7e93ad;}
 .kbd{background:#101822;border:1px solid #3a4f6b;border-radius:4px;padding:0 5px;font-size:11px;}
+table.tiny{border-collapse:collapse; width:100%; font-size:11px; color:#9fb2c8;}
+table.tiny td{padding:1.5px 4px; border-bottom:1px solid #1f2a3a; white-space:nowrap;}
+table.tiny td:nth-child(2),table.tiny td:nth-child(3),table.tiny td:nth-child(5),table.tiny td:nth-child(6){text-align:center;}
+#speedbtn{margin-left:6px;}
+@media (max-width:980px){
+  body{overflow:auto;}
+  #app{flex-direction:column; height:auto;}
+  #boardwrap{padding:2px; min-height:0;}
+  #board{width:100%; max-height:none;}
+  #side{width:100%; min-width:0; border-left:none; border-top:1px solid #2c3a4d;}
+  #side .scroll{overflow:visible;}
+}
 </style>
 </head>
 <body>
@@ -111,6 +124,7 @@ svg .boom{pointer-events:none;}
       <div class="phasebar">
         <span class="badge" id="roundbadge">Round 1</span>
         <span class="badge turn" id="phasebadge">Setup</span>
+        <button class="btn small" id="speedbtn" title="Animation speed">🐢 1×</button>
         <span id="timer"></span>
       </div>
     </div>
@@ -128,6 +142,16 @@ svg .boom{pointer-events:none;}
       </div>
       <div class="card" id="inspcard"><h3 id="insptitle">Inspector</h3><div id="inspector" class="mini">Click any sector, island, sea lane, HQ or reserve to inspect it. Click one of your pieces to move it.</div></div>
       <div class="card"><h3>Battle log</h3><div id="log"></div></div>
+      <div class="card"><h3>Quick reference</h3>
+        <table class="tiny">
+          <tr><td>Infantry</td><td>mv 2</td><td>pwr 2</td><td>Regiment</td><td>mv 2</td><td>pwr 20</td></tr>
+          <tr><td>Tank</td><td>mv 3</td><td>pwr 3</td><td>Hvy Tank</td><td>mv 3</td><td>pwr 30</td></tr>
+          <tr><td>Fighter</td><td>mv 5</td><td>pwr 5</td><td>Bomber</td><td>mv 5</td><td>pwr 25</td></tr>
+          <tr><td>Destroyer</td><td>mv 1</td><td>pwr 10</td><td>Cruiser</td><td>mv 1</td><td>pwr 50</td></tr>
+          <tr><td>Megamissile</td><td colspan="5">100 pwr to build · one shot · anywhere</td></tr>
+        </table>
+        <div class="mini" style="margin-top:5px;">Ground stops on islands &amp; HQs · planes never cross sea lanes · ships never reach center sectors. Highest power captures the rest. ⚡ for each enemy country you occupy.</div>
+      </div>
       <div class="card" style="text-align:center;">
         <button class="btn" id="rulesbtn">Rules</button>
         <button class="btn" id="scorebtn" title="Tournament scoring — highest total power value wins">End &amp; score</button>
@@ -139,6 +163,7 @@ svg .boom{pointer-events:none;}
 
 <div id="overlay"><div class="panel" id="overlaypanel"></div></div>
 
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -385,6 +410,9 @@ function addCommand(cmd){
   const seat=UI.planSeat;
   if(seatCmds(seat).length>=G.cmdLimit){ flash("Command pad is full"); return; }
   cmd.seat=seat;
+  // online: new pieces get seat-namespaced ids so every client agrees on them
+  if(NET.mode==="online"&&(cmd.kind==="buy"||cmd.kind==="exch3"||cmd.kind==="mega"))
+    cmd.newPid=(seat+1)*1000000+(NET.cmdCounter++);
   const res=applyCmd(PG,cmd);
   if(!res.ok){ flash("Illegal command"); return; }
   G.commands.push(cmd);
@@ -410,7 +438,7 @@ function log(msg,cls){ G.log.unshift({msg,cls}); const el=document.getElementByI
   el.innerHTML=G.log.slice(0,120).map(l=>`<div class="r ${l.cls||""}">${l.msg}</div>`).join(""); }
 
 async function executeRound(){
-  UI.mode="exec"; deselect(); renderAll();
+  UI.mode="exec"; stopTimer(); PG=null; deselect(); renderAll();
   bigMsg(`Round ${G.round} — Execution`);
   log(`<span class="imp">— Round ${G.round}: commands execute —</span>`);
   // mercenary command conflicts (3-player rule): different orders for same piece cancel out
@@ -478,7 +506,7 @@ async function executeRound(){
   for(const p of G.pieces){ p.moved=false; p.exch=false; p.retreated=false; p.origin=p.a; }
   G.commands=[]; G.round++;
   do{ G.official=(G.official+1)%G.seats.length; }while(!G.seats[G.official].alive);
-  startPlanning();
+  afterRound();
 }
 
 function penalize(ai){
@@ -550,7 +578,7 @@ async function capture(winner,pieces,aid){
     await flyPiece(p, rvOf(winner));
     G.pieces.splice(G.pieces.indexOf(p),1);
     if(stockLeft(G,winner,p.t)>0){
-      const np=mkPiece(p.t,winner,rvOf(winner)); np.moved=true; G.pieces.push(np);
+      const np=mkPiece(p.t,winner,rvOf(winner)); np.id=p.id+10000000; np.moved=true; G.pieces.push(np);
     } else log(`${ARMIES[winner].name} has no spare ${TYPES[p.t].name} pieces — captured unit is lost`,"bad");
   }
   renderPieces(G);
@@ -613,7 +641,7 @@ async function resolveFlags(){
       for(const p of vp){
         G.pieces.splice(G.pieces.indexOf(p),1);
         if(p.t==="FLAG") continue;
-        if(stockLeft(G,w,p.t)>0){ const np=mkPiece(p.t,w,rvOf(w)); np.moved=true; G.pieces.push(np); }
+        if(stockLeft(G,w,p.t)>0){ const np=mkPiece(p.t,w,rvOf(w)); np.id=p.id+10000000; np.moved=true; G.pieces.push(np); }
       }
     }else{
       log(`<span class="imp">🏳 ${ARMIES[e.victim].name} falls in mutual destruction — forces removed</span>`);
@@ -651,6 +679,208 @@ function tournamentScore(){
     <button class="btn primary" onclick="location.reload()">New game</button>`);
 }
 
+/* ---------------- online multiplayer (PeerJS, peer-to-peer) ----------------
+   The host is authoritative: guests send their secret orders to the host,
+   the host executes the round and broadcasts the full command list (for
+   animated replay) plus an authoritative state sync. The engine is fully
+   deterministic (no dice), so replays match. */
+let NET={mode:"local", isHost:false, peer:null, conns:{}, host:null, mySeat:0,
+         room:"", names:{}, need:0, submitted:{}, cmdCounter:0, pendingSync:null,
+         started:false, opts:null, waiting:[], myName:""};
+
+function makeCode(){ const s="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let c="";
+  for(let i=0;i<4;i++) c+=s[Math.floor(Math.random()*s.length)]; return c; }
+function netFail(err){ showPanel(`<h1>POWER</h1><p>Could not reach the matchmaking service
+  (${err&&err.type||err}). Check your internet connection and try again.</p>
+  <button class="btn primary" onclick="location.reload()">Back</button>`); }
+
+function hostGame(opts,name){
+  NET.mode="online"; NET.isHost=true; NET.mySeat=0; NET.opts=opts;
+  NET.names={0:name||"Host"}; NET.myName=name||"Host";
+  showPanel(`<h1>POWER</h1><p>Creating room…</p>`);
+  const attempt=(n)=>{
+    const code=makeCode();
+    const peer=new Peer("power-1981-"+code);
+    peer.on("open",()=>{ NET.peer=peer; NET.room=code;
+      peer.on("connection",conn=>{
+        conn.on("data",d=>hostOnData(conn,d));
+        conn.on("close",()=>hostOnClose(conn));
+      });
+      renderLobby();
+    });
+    peer.on("error",err=>{
+      if(err.type==="unavailable-id"&&n<6){ peer.destroy(); attempt(n+1); }
+      else if(!NET.room) netFail(err);
+      else log("Network: "+err.type,"bad");
+    });
+  };
+  attempt(0);
+}
+function hostOnData(conn,d){
+  if(d.t==="hello"){
+    if(!NET.started){
+      const need=NET.opts.players;
+      const seat=[0,1,2,3].find(s=>s<need&&!(s in NET.names));
+      if(seat===undefined){ conn.send({t:"full"}); return; }
+      NET.names[seat]=(d.name||"Player "+(seat+1)).slice(0,18);
+      NET.conns[seat]=conn; conn._seat=seat;
+      conn.send({t:"seat",seat,code:NET.room});
+      broadcastLobby();
+    }else{
+      // reconnect: reclaim a seat by name
+      const seat=Object.keys(NET.names).map(Number).find(s=>NET.names[s]===d.name&&!NET.conns[s]&&s!==0);
+      if(seat!==undefined){
+        NET.conns[seat]=conn; conn._seat=seat;
+        conn.send({t:"rejoin",seat,code:NET.room,opts:NET.opts,G:G,pidSeq});
+        note(NET.names[seat]+" reconnected");
+        broadcastWho();
+      } else conn.send({t:"full"});
+    }
+  }
+  if(d.t==="orders"&&NET.started&&d.round===G.round&&UI.mode!=="exec"){
+    NET.submitted[d.seat]=d.cmds||[];
+    broadcastWho(); checkAllIn();
+  }
+}
+function hostOnClose(conn){
+  const s=conn._seat;
+  if(s!==undefined){ delete NET.conns[s];
+    if(NET.started){ note((NET.names[s]||"A player")+" disconnected — they can rejoin with the room code"); broadcastWho(); }
+    else { delete NET.names[s]; broadcastLobby(); }
+  }
+}
+function note(msg){ log(msg,"bad"); broadcast({t:"note",msg}); }
+function broadcast(msg){ Object.values(NET.conns).forEach(c=>{ if(c.open) c.send(msg); }); }
+function broadcastLobby(){ broadcast({t:"lobby",names:NET.names,need:NET.opts.players}); if(!NET.started) renderLobby(); }
+function hostStart(){
+  NET.started=true;
+  const names=[0,1,2,3].map(i=>NET.names[i]||"");
+  const opts={players:NET.opts.players,timer:NET.opts.timer,names};
+  broadcast({t:"start",opts});
+  beginOnlineGame(opts);
+}
+function joinGame(code,name){
+  NET.mode="online"; NET.isHost=false; NET.myName=name||"Guest";
+  showPanel(`<h1>POWER</h1><p>Joining room ${code}…</p>`);
+  const peer=new Peer();
+  NET.peer=peer;
+  peer.on("open",()=>{
+    const conn=peer.connect("power-1981-"+code,{reliable:true});
+    NET.host=conn;
+    let opened=false;
+    conn.on("open",()=>{ opened=true; conn.send({t:"hello",name:NET.myName}); });
+    conn.on("data",d=>guestOnData(d));
+    conn.on("close",()=>{ if(opened) showPanel(`<h1>POWER</h1><p>Lost the connection to the host.</p>
+      <button class="btn primary" onclick="location.reload()">Back</button>`); });
+    setTimeout(()=>{ if(!opened) showPanel(`<h1>POWER</h1><p>No room <b>${code}</b> found. Check the code with your host.</p>
+      <button class="btn primary" onclick="location.reload()">Back</button>`); },12000);
+  });
+  peer.on("error",err=>{ if(err.type==="peer-unavailable")
+      showPanel(`<h1>POWER</h1><p>No room <b>${code}</b> found. Check the code with your host.</p>
+        <button class="btn primary" onclick="location.reload()">Back</button>`);
+    else if(!NET.room) netFail(err); });
+}
+function guestOnData(d){
+  if(d.t==="seat"){ NET.mySeat=d.seat; NET.room=d.code; }
+  if(d.t==="lobby"){ NET.names=d.names; NET.need=d.need; if(!NET.started) renderLobby(); }
+  if(d.t==="full"){ showPanel(`<h1>POWER</h1><p>That room is already full.</p>
+      <button class="btn primary" onclick="location.reload()">Back</button>`); }
+  if(d.t==="start"){ NET.started=true; beginOnlineGame(d.opts); }
+  if(d.t==="who"){ NET.waiting=d.waiting; if(UI.mode==="plan"||UI.mode==="wait") renderPad(); }
+  if(d.t==="note"){ log(d.msg,"bad"); }
+  if(d.t==="exec"){
+    NET.started=true; stopTimer(); PG=null; G.commands=d.cmds;
+    executeRound();
+  }
+  if(d.t==="sync"){ NET.pendingSync=d; if(UI.mode!=="exec") applySync(); }
+  if(d.t==="rejoin"){
+    NET.mySeat=d.seat; NET.room=d.code; NET.started=true;
+    hidePanel(); applyState(d); startPlanningOnline();
+  }
+}
+function applySync(){
+  const d=NET.pendingSync; if(!d) return;
+  NET.pendingSync=null;
+  if(d.G.round===G.round&&UI.mode!=="over"){
+    const myCmds=G.commands.filter(c=>c.seat===NET.mySeat);
+    applyState(d);
+    if(UI.mode==="plan"||UI.mode==="wait"){
+      // re-validate any orders already written this round
+      PG=clone(G); const keep=[];
+      for(const c of myCmds){ if(applyCmd(PG,c).ok) keep.push(c); }
+      G.commands=keep;
+      if(keep.length<myCmds.length) flash("Some orders were re-checked and dropped");
+      renderAll();
+    }
+  }
+}
+function applyState(d){ G=d.G; pidSeq=d.pidSeq; renderAll(); }
+function beginOnlineGame(opts){
+  hidePanel(); newGame(opts); NET.cmdCounter=0;
+  log(`<span class="imp">Online war begins — room ${NET.room}. You are ${G.seats[NET.mySeat].name}.</span>`);
+  startPlanningOnline();
+}
+function startPlanningOnline(){
+  NET.submitted={}; NET.waiting=[];
+  UI.mode="plan"; UI.planSeat=NET.mySeat;
+  PG=clone(G);
+  for(const c of G.commands.filter(c=>c.seat===NET.mySeat)) applyCmd(PG,c);
+  deselect();
+  if(G.useTimer) startTimer();
+  renderAll();
+  if(NET.isHost) broadcastWho();
+}
+function submitOrders(){
+  stopTimer(); deselect();
+  const cmds=G.commands.filter(c=>c.seat===NET.mySeat);
+  UI.mode="wait"; renderAll();
+  if(NET.isHost){ NET.submitted[0]=cmds; broadcastWho(); checkAllIn(); }
+  else if(NET.host&&NET.host.open) NET.host.send({t:"orders",seat:NET.mySeat,cmds,round:G.round});
+}
+function aliveSeatIdxs(){ return G.seats.map((s,i)=>s.alive?i:-1).filter(i=>i>=0); }
+function broadcastWho(){
+  NET.waiting=aliveSeatIdxs().filter(s=>!(s in NET.submitted)).map(s=>G.seats[s]?G.seats[s].name:NET.names[s]);
+  broadcast({t:"who",waiting:NET.waiting});
+  renderPad();
+}
+function checkAllIn(){
+  if(!NET.isHost||UI.mode==="exec") return;
+  if(aliveSeatIdxs().some(s=>!(s in NET.submitted))) return;
+  launchExec();
+}
+function launchExec(){
+  const all=[];
+  for(const s of aliveSeatIdxs()) all.push(...(NET.submitted[s]||[]));
+  broadcast({t:"exec",cmds:all});
+  stopTimer(); PG=null; G.commands=all;
+  executeRound();
+}
+function afterRound(){
+  if(NET.mode==="online"){
+    if(NET.isHost){ broadcast({t:"sync",G,pidSeq}); startPlanningOnline(); }
+    else { if(NET.pendingSync) applySync(); startPlanningOnline(); }
+  } else startPlanning();
+}
+function renderLobby(){
+  const need=NET.isHost?NET.opts.players:NET.need;
+  const slots=[];
+  for(let i=0;i<(need||4);i++){
+    const nm=NET.names[i];
+    slots.push(`<li style="margin:3px 0;">${i+1}. ${nm?`<b>${nm}</b>`:`<i style="opacity:.5">waiting for player…</i>`}${i===0?" 👑":""}${i===NET.mySeat&&NET.started===false?" — you":""}</li>`);
+  }
+  const ready=Object.keys(NET.names).length===need;
+  showPanel(`<h1>POWER</h1>
+    <p class="mini" style="letter-spacing:.2em;">ONLINE LOBBY</p>
+    <p style="margin-top:10px;">Room code — share it with your friends:</p>
+    <div style="font-size:46px;font-weight:900;letter-spacing:.35em;color:#ffd567;margin:8px 0;">${NET.room||"…"}</div>
+    <p class="mini">They open <b>${location.host?location.href.split("?")[0]:"this page"}</b>, pick “Join online game”, and type the code. ${need===2?"Each player commands two countries.":need===3?"The 4th country fights as mercenaries.":""}</p>
+    <ul style="list-style:none;margin:12px 0;">${slots.join("")}</ul>
+    ${NET.isHost
+      ? `<button class="btn primary" id="lobbystart" ${ready?"":"disabled"}>${ready?"Start the war":"Waiting for players…"}</button>`
+      : `<p class="mini">Waiting for the host to start…</p>`}`);
+  const b=document.getElementById("lobbystart"); if(b) b.onclick=hostStart;
+}
+
 /* ---------------- planning flow ---------------- */
 function startPlanning(){
   UI.mode="pass";
@@ -681,6 +911,7 @@ function passScreen(){
   };
 }
 function donePlanning(){
+  if(NET.mode==="online"){ submitOrders(); return; }
   stopTimer();
   deselect();
   UI.planIdx++;
@@ -706,7 +937,7 @@ function myArmies(){ const s=G.seats[UI.planSeat]; const a=s?s.armies.slice():[]
   if(G.mode===3&&UI.mode==="plan") a.push(3); return a; }
 function deselect(){ UI.sel=null; UI.hls=[]; }
 function clickArea(aid){
-  if(UI.mode!=="plan"&&UI.mode!=="exec"&&UI.mode!=="over"){ return; }
+  if(UI.mode!=="plan"&&UI.mode!=="exec"&&UI.mode!=="over"&&UI.mode!=="wait"){ return; }
   const st=curState();
   if(UI.sel&&UI.hls.includes(aid)){
     const p=st.pieces.find(x=>x.id===UI.sel);
@@ -813,23 +1044,26 @@ function drawBoard(){
   for(let i=0;i<4;i++){
     const t=areas[rvOf(i)].tray;
     el("rect",{x:t.x,y:t.y,width:t.w,height:t.h,rx:10,fill:"var(--paper)",stroke:ARMIES[i].hex,"stroke-width":3});
-    const lx=t.vert? t.x+t.w/2 : t.x+10, ly=t.vert? t.y+12 : t.y+15;
-    const txt=el("text",{x:lx,y:ly,fill:"#6b5b39",style:"font-size:11px;font-weight:800;letter-spacing:.18em;pointer-events:none;"});
-    txt.textContent="RESERVE";
-    if(t.vert){ txt.setAttribute("text-anchor","middle"); txt.setAttribute("transform",`rotate(90 ${lx} ${ly})`);
-      txt.setAttribute("x",lx); txt.setAttribute("y",ly); txt.setAttribute("transform",`rotate(90 ${t.x+t.w/2} ${t.y+40})`);
-      txt.setAttribute("x",t.x+t.w/2); txt.setAttribute("y",t.y+44); txt.setAttribute("text-anchor","middle"); txt.removeAttribute("transform"); txt.textContent="RV"; }
+    const lab=el("text",{fill:"#6b5b39","text-anchor":"middle",
+      style:"font-size:10.5px;font-weight:800;letter-spacing:.14em;pointer-events:none;"});
+    if(t.vert){
+      lab.setAttribute("x",t.x+t.w/2); lab.setAttribute("y",t.y+28);
+      lab.setAttribute("transform",`rotate(${i===1?90:-90} ${t.x+t.w/2} ${t.y+28})`);
+      lab.textContent=ARMIES[i].name.toUpperCase()+" RV";
+      lab.setAttribute("y",t.y+(i===1?30:30));
+    } else {
+      lab.setAttribute("x",t.x+t.w/2-20); lab.setAttribute("y",t.y+16);
+      lab.textContent=ARMIES[i].name.toUpperCase()+" RESERVE";
+    }
     // PP counter
-    const px=t.vert? t.x+t.w/2 : t.x+t.w-44, py=t.vert? t.y+t.h-30 : t.y+15;
+    const px=t.vert? t.x+t.w/2 : t.x+t.w-44, py=t.vert? t.y+t.h-30 : t.y+16;
     const g=el("g",{id:"pp-"+i,style:"pointer-events:none;"});
     el("use",{href:"#g-PP",x:0,y:0,transform:`translate(${px},${py-4}) scale(.8)`,fill:"#e0a818",stroke:"#6b5800","stroke-width":1},g);
     el("text",{x:px+12,y:py,fill:"#3a3000",style:"font-size:14px;font-weight:800;",id:"pptxt-"+i},g).textContent="0";
   }
-  // corner title
+  // title
   el("text",{x:SZ/2,y:SZ-22,"text-anchor":"middle",fill:"#ffffff88",
     style:"font-size:17px;font-weight:900;font-style:italic;letter-spacing:.3em;pointer-events:none;"}).textContent="P O W E R";
-  el("text",{x:SZ/2,y:30,"text-anchor":"middle",fill:"#ffffff66",
-    style:"font-size:11px;letter-spacing:.22em;pointer-events:none;"}).textContent="THE   BOARD   GAME";
   // clickable overlays
   const ovg=el("g",{id:"ovs"});
   for(const id of allIds){
@@ -888,6 +1122,7 @@ function renderPieces(st){
       const scale=(["R","H","B","C","M","FLAG"].includes(p.t)?1.0:0.8)*(n>6?0.62:n>4?0.74:1);
       if(!g){
         g=el("g",{id:"pc-"+p.id,class:"piece ghost","data-pid":p.id},layer);
+        el("circle",{r:16,fill:"#fff","fill-opacity":"0",stroke:"none"},g); // generous tap target
         const ring=el("circle",{class:"ring",r:17},g);
         el("use",{href:"#g-"+p.t,fill:ARMIES[p.o].hex,stroke:ARMIES[p.o].stroke,"stroke-width":1.4},g);
         g.getBoundingClientRect(); // force layout so the pop-in transition runs
@@ -973,31 +1208,46 @@ function renderChips(){
     const seat=a.seat>=0?G.seats[a.seat]:null;
     const me=UI.mode==="plan"&&myArmies().includes(a.idx);
     const cnt=armyPieces(G,a.idx).length;
-    return `<div class="chip ${a.alive?"":"dead"} ${me?"me":""}">
+    return `<div class="chip ${a.alive?"":"dead"} ${me?"me":""}" title="${ARMIES[a.idx].name}: ${a.pp} Power Units, ${cnt} pieces">
       <span class="dot" style="background:${ARMIES[a.idx].hex}"></span>
       <span>${ARMIES[a.idx].name}${a.seat===-1?" (merc)":seat&&seat.name!==ARMIES[a.idx].name?" · "+seat.name:""}</span>
-      <span class="pp">⚡${a.pp} · ${cnt}</span></div>`;
+      <span class="pp">⚡${a.pp} ⚔${cnt}</span></div>`;
   }).join("");
 }
 function renderPad(){
   const card=document.getElementById("padcard");
-  if(UI.mode!=="plan"){ card.style.display=UI.mode==="exec"?"block":"none"; }
-  else card.style.display="block";
-  if(UI.mode==="plan"){
+  card.style.display=(UI.mode==="plan"||UI.mode==="exec"||UI.mode==="wait")?"block":"none";
+  if(UI.mode==="plan"||UI.mode==="wait"){
     const mine=seatCmds(UI.planSeat);
-    document.getElementById("padowner").textContent=G.seats[UI.planSeat].name.toUpperCase();
+    document.getElementById("padowner").textContent=(G.seats[UI.planSeat]?G.seats[UI.planSeat].name:"").toUpperCase();
     document.getElementById("cmdcount").textContent=mine.length+" / "+G.cmdLimit;
+    const locked=UI.mode==="wait";
     document.getElementById("cmdlist").innerHTML =
       Array.from({length:G.cmdLimit},(_,i)=>{
         const c=mine[i];
-        return `<li>${c?`<span>${i+1}. ${notation(c)}</span><span class="x" data-undo="${i}" title="undo">✕</span>`:`<span style="opacity:.35">${i+1}.</span>`}</li>`;
+        return `<li class="${locked?"exec":""}">${c?`<span>${i+1}. ${notation(c)}</span>${locked?"":`<span class="x" data-undo="${i}" title="undo">✕</span>`}`:`<span style="opacity:.35">${i+1}.</span>`}</li>`;
       }).join("");
     document.querySelectorAll("#cmdlist .x").forEach(x=>x.onclick=e=>{e.stopPropagation(); undoCommand(+x.getAttribute("data-undo"));});
-    document.getElementById("donebtn").style.display="inline-block";
-    document.getElementById("donebtn").textContent = UI.planIdx<UI.planOrder.length-1 ? "Done — pass the device ➜" : "Done — execute the round ⚔";
+    const btn=document.getElementById("donebtn");
+    if(UI.mode==="plan"){
+      btn.style.display="inline-block"; btn.disabled=false;
+      btn.textContent = NET.mode==="online" ? "Submit secret orders ⚔"
+        : (UI.planIdx<UI.planOrder.length-1 ? "Done — pass the device ➜" : "Done — execute the round ⚔");
+    }else{
+      btn.style.display="none";
+    }
+    let wd=document.getElementById("waitdiv");
+    if(UI.mode==="wait"){
+      if(!wd){ wd=document.createElement("div"); wd.id="waitdiv"; card.appendChild(wd); }
+      wd.innerHTML=`<div class="mini" style="margin-top:8px;">Orders sealed ✉ — waiting for:
+        <b style="color:#ffd567">${(NET.waiting||[]).join(", ")||"…"}</b></div>
+        ${NET.isHost?'<button class="btn small danger" id="forcebtn" style="margin-top:6px;">Execute without them</button>':""}`;
+      const fb=document.getElementById("forcebtn"); if(fb) fb.onclick=launchExec;
+    } else if(wd) wd.remove();
   } else if(UI.mode==="exec"){
     document.getElementById("padowner").textContent="EXECUTING";
     document.getElementById("donebtn").style.display="none";
+    const wd=document.getElementById("waitdiv"); if(wd) wd.remove();
   }
 }
 function renderInspector(){
@@ -1093,7 +1343,8 @@ function megaBuilder(ai,aid){
 function renderAll(){
   document.getElementById("roundbadge").textContent="Round "+G.round;
   const pb=document.getElementById("phasebadge");
-  pb.textContent = UI.mode==="plan" ? `Planning — ${G.seats[UI.planSeat].name}` :
+  pb.textContent = UI.mode==="plan" ? (NET.mode==="online"?`Your orders — ${G.seats[UI.planSeat].name}`:`Planning — ${G.seats[UI.planSeat].name}`) :
+                   UI.mode==="wait" ? "Orders sealed — waiting" :
                    UI.mode==="exec" ? "Executing" : UI.mode==="pass" ? "Pass the device" :
                    UI.mode==="over" ? "Game over" : "Setup";
   renderChips(); renderPad(); renderInspector(); renderPieces(curState());
@@ -1139,38 +1390,69 @@ function rulesPanel(){
 
 /* ---------------- setup ---------------- */
 function setupScreen(){
-  let players=4, timer=false, names=["","","",""];
+  let players=4, timer=false, names=["","","",""], mode="hot", myName="", code="";
   const draw=()=>{
+    const seatLabel=i=>players===2?(i===0?"Red + Black":"Yellow + White"):ARMIES[i].name;
     showPanel(`
-      <h1>POWER</h1><div class="sub" style="color:#7e93ad;letter-spacing:.25em;font-size:12px;">THE BOARD GAME · 1981 · LOCAL HOTSEAT</div>
+      <h1>POWER</h1><div class="sub" style="color:#7e93ad;letter-spacing:.25em;font-size:12px;">THE BOARD GAME · 1981</div>
       <p style="margin-top:12px;">Command infantry, tanks, fighters, bombers, destroyers and cruisers. Write secret orders, strike simultaneously, capture every flag.</p>
-      <label>Players</label>
-      <div class="segs" id="pseg">
-        ${[2,3,4].map(n=>`<div class="seg ${players===n?"on":""}" data-n="${n}">${n} players</div>`).join("")}
+      <label>How do you want to play?</label>
+      <div class="segs" id="mseg">
+        <div class="seg ${mode==="hot"?"on":""}" data-m="hot">🛋 Hotseat — one device</div>
+        <div class="seg ${mode==="host"?"on":""}" data-m="host">🌐 Host online game</div>
+        <div class="seg ${mode==="join"?"on":""}" data-m="join">🔑 Join online game</div>
       </div>
-      <p class="mini" style="margin-top:4px;">${players===2?"Each player commands two adjacent countries (10 commands/round).":players===3?"The fourth country fights as mercenaries — anyone may command them.":"Four countries, every player for himself."}</p>
-      ${Array.from({length:players},(_,i)=>`<label>Player ${i+1} ${players===4?"("+ARMIES[i].name+")":players===3?"("+ARMIES[i].name+")":"("+(i===0?"Red + Black":"Yellow + White")+")"}</label>
-        <input type="text" id="nm${i}" placeholder="${players===4||players===3?ARMIES[i].name:"Player "+(i+1)}" value="${names[i]||""}">`).join("")}
-      <label>3-minute planning timer</label>
-      <div class="segs" id="tseg">
-        <div class="seg ${!timer?"on":""}" data-t="0">Off — relaxed</div>
-        <div class="seg ${timer?"on":""}" data-t="1">On — authentic</div>
-      </div>
+      ${mode!=="join"?`
+        <label>Players</label>
+        <div class="segs" id="pseg">
+          ${[2,3,4].map(n=>`<div class="seg ${players===n?"on":""}" data-n="${n}">${n} players</div>`).join("")}
+        </div>
+        <p class="mini" style="margin-top:4px;">${players===2?"Each player commands two adjacent countries (10 commands/round).":players===3?"The fourth country fights as mercenaries — anyone may command them.":"Four countries, every player for himself."}</p>`:""}
+      ${mode==="hot"?Array.from({length:players},(_,i)=>`<label>Player ${i+1} (${seatLabel(i)})</label>
+        <input type="text" id="nm${i}" placeholder="${players===2?"Player "+(i+1):ARMIES[i].name}" value="${names[i]||""}">`).join(""):""}
+      ${mode!=="hot"?`<label>Your name</label>
+        <input type="text" id="myname" maxlength="18" placeholder="${mode==="host"?"Host":"Your name"}" value="${myName}">`:""}
+      ${mode==="join"?`<label>Room code (ask your host)</label>
+        <input type="text" id="roomcode" maxlength="4" placeholder="ABCD" value="${code}" style="font-size:22px;letter-spacing:.4em;text-transform:uppercase;width:160px;">`:""}
+      ${mode!=="join"?`
+        <label>3-minute planning timer</label>
+        <div class="segs" id="tseg">
+          <div class="seg ${!timer?"on":""}" data-t="0">Off — relaxed</div>
+          <div class="seg ${timer?"on":""}" data-t="1">On — authentic</div>
+        </div>`:""}
       <div style="margin-top:18px;">
-        <button class="btn primary" id="startbtn" style="font-size:16px;padding:10px 26px;">Start the war</button>
+        <button class="btn primary" id="startbtn" style="font-size:16px;padding:10px 26px;">${mode==="hot"?"Start the war":mode==="host"?"Create room":"Join room"}</button>
         <button class="btn" id="rules0">Rules</button>
-      </div>`);
+      </div>
+      ${mode!=="hot"?`<p class="mini" style="margin-top:10px;">Online play is free peer-to-peer — everyone plans their secret orders at the same time on their own device.</p>`:""}`);
+    const grab=id=>document.getElementById(id);
+    document.querySelectorAll("#mseg .seg").forEach(s=>s.onclick=()=>{
+      if(grab("myname")) myName=grab("myname").value.trim();
+      if(grab("roomcode")) code=grab("roomcode").value.trim();
+      mode=s.getAttribute("data-m"); draw();});
     document.querySelectorAll("#pseg .seg").forEach(s=>s.onclick=()=>{players=+s.getAttribute("data-n"); draw();});
     document.querySelectorAll("#tseg .seg").forEach(s=>s.onclick=()=>{timer=s.getAttribute("data-t")==="1"; draw();});
-    document.getElementById("rules0").onclick=()=>{rulesPanel(); document.querySelector("#overlaypanel .btn.primary").onclick=draw;};
-    document.getElementById("startbtn").onclick=()=>{
-      for(let i=0;i<players;i++) names[i]=document.getElementById("nm"+i).value.trim();
-      newGame({players,timer,names});
-      hidePanel();
-      log(`<span class="imp">A new war begins — ${players} players.</span>`);
-      startPlanning();
+    grab("rules0").onclick=()=>{rulesPanel(); document.querySelector("#overlaypanel .btn.primary").onclick=draw;};
+    grab("startbtn").onclick=()=>{
+      if(mode==="hot"){
+        for(let i=0;i<players;i++) names[i]=grab("nm"+i).value.trim();
+        newGame({players,timer,names});
+        hidePanel();
+        log(`<span class="imp">A new war begins — ${players} players.</span>`);
+        startPlanning();
+        return;
+      }
+      if(!window.Peer){ flash("Couldn't load the network library — check your internet"); return; }
+      if(mode==="host"){
+        myName=grab("myname").value.trim();
+        hostGame({players,timer},myName);
+      }else{
+        myName=grab("myname").value.trim();
+        code=grab("roomcode").value.trim().toUpperCase();
+        if(code.length!==4){ flash("Room codes are 4 characters"); return; }
+        joinGame(code,myName);
+      }
     };
-    for(let i=0;i<players;i++) document.getElementById("nm"+i).oninput=e=>names[i]=e.target.value;
   };
   draw();
 }
@@ -1181,8 +1463,12 @@ newGame({players:4,timer:false,names:[]});
 renderAll();
 document.getElementById("donebtn").onclick=donePlanning;
 document.getElementById("rulesbtn").onclick=rulesPanel;
-document.getElementById("restartbtn").onclick=()=>location.reload();
+document.getElementById("restartbtn").onclick=()=>{ if(UI.mode==="setup"||confirm("Abandon this war and start over?")) location.reload(); };
 document.getElementById("scorebtn").onclick=tournamentScore;
+document.getElementById("speedbtn").onclick=()=>{
+  UI.speed=UI.speed===1?5:1;
+  document.getElementById("speedbtn").textContent=UI.speed===1?"🐢 1×":"🐇 5×";
+};
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ deselect(); renderAll(); } });
 setupScreen();
 

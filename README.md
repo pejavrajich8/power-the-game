@@ -4,13 +4,20 @@ A faithful digital recreation of **Power** by Monte B. Young (Power Games Intern
 
 ## How to play
 
-Just open `index.html` in any browser (double-click it). Everything is in that one file.
+**Play online:** https://pejavrajich8.github.io/power-the-game/ — or just open `index.html` in any browser. Everything is in that one file.
+
+Two ways to play:
+
+- **🛋 Hotseat** — everyone shares one device, passing it around to write secret orders.
+- **🌐 Online multiplayer** — one player hosts and gets a 4-letter room code; friends pick "Join online game" and enter the code. Everyone plans their secret orders **simultaneously on their own device** (free peer-to-peer WebRTC — no accounts, no server). If someone drops, they can rejoin with the same name and room code.
+
+Player counts:
 
 - **2 players** — each commands two adjacent countries (official 2-player rules: 10 commands, separate reserves, combined combat strength).
 - **3 players** — the fourth country fights as **mercenaries**; anyone may spend commands on them, and clashing mercenary orders cancel out (official rule).
 - **4 players** — the classic free-for-all.
 
-Each round every player secretly writes up to **5 commands** (pass-the-device hotseat; optional authentic 3-minute timer), then all orders execute **simultaneously** — Diplomacy style.
+Each round every player secretly writes up to **5 commands** (optional authentic 3-minute timer), then all orders execute **simultaneously** — Diplomacy style.
 
 ## The rules in 60 seconds
 
