@@ -109,9 +109,20 @@ table.tiny td:nth-child(2),table.tiny td:nth-child(3),table.tiny td:nth-child(5)
   #side{width:100%; min-width:0; border-left:none; border-top:1px solid #2c3a4d;}
   #side .scroll{overflow:visible;}
 }
-#welcome{position:fixed;right:18px;bottom:18px;z-index:40;background:#16243ae8;border:1px solid #2c456b;
-  border-radius:14px;padding:16px 18px;width:290px;box-shadow:0 10px 40px #000a;backdrop-filter:blur(4px);}
-#welcome input{width:100%;box-sizing:border-box;}
+#welcome{position:fixed;right:18px;bottom:18px;z-index:40;background:linear-gradient(165deg,#1b2c47f2,#101c30f2);
+  border:1px solid #35517c;border-radius:16px;padding:20px 22px;width:280px;
+  box-shadow:0 14px 50px #000c, inset 0 1px 0 #ffffff14;backdrop-filter:blur(8px);}
+#welcome input{width:100%;box-sizing:border-box;background:#0c1626;border:1px solid #35517c;border-radius:8px;
+  color:#eaf2ff;padding:9px 11px;font-size:14px;outline:none;}
+#welcome input:focus{border-color:#5a86c8;}
+#welcome .wbtn{display:block;width:100%;box-sizing:border-box;text-align:center;}
+.swatches{display:flex;gap:10px;margin:10px 0 12px;}
+.sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid #ffffff22;
+  box-shadow:inset 0 -3px 6px #0006;transition:transform .12s,border-color .12s;}
+.sw:hover{transform:scale(1.12);}
+.sw.on{border-color:#fff;transform:scale(1.15);box-shadow:0 0 10px #ffffff66, inset 0 -3px 6px #0006;}
+#welcome .meta{color:#8aa2c4;font-size:11.5px;line-height:1.6;}
+#welcome .wdiv{height:1px;background:#2c456b;margin:13px -22px;}
 .gamerow{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#101c30;
   border:1px solid #2c456b;border-radius:10px;padding:10px 14px;margin:8px 0;}
 </style>
@@ -1109,8 +1120,8 @@ function drawBoard(){
   // magenta grid over countries + sector numbers
   for(const b of C_BLOCKS){
     for(let i=0;i<=3;i++){
-      el("line",{x1:X(b.c0)+i*CELL,y1:Y(b.r0),x2:X(b.c0)+i*CELL,y2:Y(b.r0)+3*CELL,stroke:"var(--grid)","stroke-width":2,opacity:.85});
-      el("line",{x1:X(b.c0),y1:Y(b.r0)+i*CELL,x2:X(b.c0)+3*CELL,y2:Y(b.r0)+i*CELL,stroke:"var(--grid)","stroke-width":2,opacity:.85});
+      el("line",{x1:X(b.c0)+i*CELL,y1:Y(b.r0),x2:X(b.c0)+i*CELL,y2:Y(b.r0)+3*CELL,stroke:ARMIES[b.army].hex,"stroke-width":2,opacity:.8});
+      el("line",{x1:X(b.c0),y1:Y(b.r0)+i*CELL,x2:X(b.c0)+3*CELL,y2:Y(b.r0)+i*CELL,stroke:ARMIES[b.army].hex,"stroke-width":2,opacity:.8});
     }
     for(let r=0;r<3;r++)for(let c=0;c<3;c++){
       const idx=b.idx(r,c);
@@ -1609,29 +1620,35 @@ function welcomeBar(show){
   const p=PROFILE.load();
   let fav=p?p.fav:0;
   w.innerHTML=`
-    <div style="font-weight:900;font-style:italic;font-size:22px;letter-spacing:.12em;color:#eaf6ff;text-shadow:0 0 12px #2d7fd6;">POWER</div>
-    <div class="mini" style="letter-spacing:.22em;margin-bottom:10px;">THE BOARD GAME · 1981</div>
-    ${p?`<div class="mini" style="margin:8px 0;line-height:1.6;">👤 <b style="color:#fff;">${esc(p.name)}</b>
-        &nbsp;<a href="#" id="signout" style="color:#7e93ad;">sign out</a><br>
-        ${p.played||0} played · ${p.won||0} won · favourite
-        <b style="color:${ARMIES[p.fav??0].hex};">${ARMIES[p.fav??0].name}</b></div>`
-     :`<div class="mini" style="margin-bottom:4px;">Sign in to track your wins (saved in this browser):</div>
-       <input type="text" id="pfname" maxlength="18" placeholder="Your name" style="margin:4px 0;">
-       <div class="segs" id="favseg" style="margin:4px 0;">
-         ${ARMIES.map((a,i)=>`<div class="seg ${i===0?"on":""}" data-f="${i}" style="color:${a.hex};font-weight:800;">${a.name}</div>`).join("")}
+    <div style="font-weight:900;font-style:italic;font-size:26px;letter-spacing:.14em;color:#eaf6ff;text-shadow:0 0 16px #2d7fd6,0 0 36px #2d7fd680;">POWER</div>
+    <div class="mini" style="letter-spacing:.24em;color:#7e93ad;">THE BOARD GAME · 1981</div>
+    <div class="wdiv"></div>
+    ${p?`<div style="display:flex;align-items:center;gap:10px;">
+        <div class="sw on" style="background:${ARMIES[p.fav??0].hex};cursor:default;flex:none;"></div>
+        <div>
+          <div style="font-weight:800;color:#fff;font-size:15px;">${esc(p.name)}</div>
+          <div class="meta">${p.played||0} played · ${p.won||0} won
+            · <a href="#" id="signout" style="color:#7e93ad;">sign out</a></div>
+        </div>
+      </div>`
+     :`<div class="meta" style="margin-bottom:8px;">Sign in to track your wins — pick your colour:</div>
+       <input type="text" id="pfname" maxlength="18" placeholder="Your name">
+       <div class="swatches" id="favseg">
+         ${ARMIES.map((a,i)=>`<div class="sw ${i===0?"on":""}" data-f="${i}" style="background:${a.hex};" title="${a.name}"></div>`).join("")}
        </div>
-       <button class="btn" id="signin" style="margin-bottom:4px;">Sign in</button>`}
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn primary" id="wplay" style="font-size:15px;">▶ Play</button>
-      <button class="btn" id="wfind">🔍 Find games</button>
-      <button class="btn" id="wrules">Rules</button>
+       <button class="btn wbtn" id="signin">Sign in</button>`}
+    <div class="wdiv"></div>
+    <button class="btn primary wbtn" id="wplay" style="font-size:16px;padding:11px 0;">▶ &nbsp;Play</button>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn" id="wfind" style="flex:1;">🔍 Find games</button>
+      <button class="btn" id="wrules" style="flex:1;">Rules</button>
     </div>
-    <p class="mini" style="margin-top:10px;">Have a look around the board — the war starts when you do.</p>`;
+    <p class="meta" style="margin:12px 0 0;text-align:center;">Have a look around the board —<br>the war starts when you do.</p>`;
   if(p){
     document.getElementById("signout").onclick=(e)=>{ e.preventDefault(); PROFILE.clear(); welcomeBar(true); };
   }else{
-    w.querySelectorAll("#favseg .seg").forEach(s=>s.onclick=()=>{
-      w.querySelectorAll("#favseg .seg").forEach(x=>x.classList.remove("on"));
+    w.querySelectorAll("#favseg .sw").forEach(s=>s.onclick=()=>{
+      w.querySelectorAll("#favseg .sw").forEach(x=>x.classList.remove("on"));
       s.classList.add("on"); fav=+s.getAttribute("data-f");
     });
     document.getElementById("signin").onclick=()=>{
