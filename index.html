@@ -734,6 +734,8 @@ function hostGame(opts,name){
     const code=makeCode();
     const peer=new Peer("power-1981-"+code);
     peer.on("open",()=>{ NET.peer=peer; NET.room=code;
+      // if the signaling server drops us, reconnect so the room stays joinable
+      peer.on("disconnected",()=>{ try{ if(!peer.destroyed) peer.reconnect(); }catch(e){} });
       peer.on("connection",conn=>{
         conn.on("data",d=>hostOnData(conn,d));
         conn.on("close",()=>hostOnClose(conn));
@@ -795,12 +797,20 @@ function hostStart(){
   broadcast({t:"start",opts});
   beginOnlineGame(opts);
 }
-function joinGame(code,name){
+function joinGame(code,name,attempt){
+  attempt=attempt||0;
   NET.mode="online"; NET.isHost=false; NET.myName=name||"Guest";
-  showPanel(`<h1>POWER</h1><p>Joining room ${code}…</p>`);
+  showPanel(`<h1>POWER</h1><p>Joining room ${code}…${attempt?` (retry ${attempt})`:""}</p>`);
+  const fail=(msg)=>{
+    if(attempt<2){ setTimeout(()=>joinGame(code,name,attempt+1),2500); return; }
+    showPanel(`<h1>POWER</h1><p>${msg}</p>
+      <p class="mini">The host may have left, or their connection dropped. Ask them for the current code — or check the game browser again.</p>
+      <button class="btn primary" onclick="location.reload()">Back</button>`);
+  };
   const peer=new Peer();
   NET.peer=peer;
   peer.on("open",()=>{
+    peer.on("disconnected",()=>{ try{ if(!peer.destroyed) peer.reconnect(); }catch(e){} });
     const conn=peer.connect("power-1981-"+code,{reliable:true});
     NET.host=conn;
     let opened=false;
@@ -808,12 +818,9 @@ function joinGame(code,name){
     conn.on("data",d=>guestOnData(d));
     conn.on("close",()=>{ if(opened) showPanel(`<h1>POWER</h1><p>Lost the connection to the host.</p>
       <button class="btn primary" onclick="location.reload()">Back</button>`); });
-    setTimeout(()=>{ if(!opened) showPanel(`<h1>POWER</h1><p>No room <b>${code}</b> found. Check the code with your host.</p>
-      <button class="btn primary" onclick="location.reload()">Back</button>`); },12000);
+    setTimeout(()=>{ if(!opened){ peer.destroy(); fail(`Couldn't reach room <b>${code}</b>.`); } },12000);
   });
-  peer.on("error",err=>{ if(err.type==="peer-unavailable")
-      showPanel(`<h1>POWER</h1><p>No room <b>${code}</b> found. Check the code with your host.</p>
-        <button class="btn primary" onclick="location.reload()">Back</button>`);
+  peer.on("error",err=>{ if(err.type==="peer-unavailable"){ peer.destroy(); fail(`Couldn't find room <b>${code}</b>.`); }
     else if(!NET.room) netFail(err); });
 }
 function guestOnData(d){
@@ -1503,22 +1510,105 @@ function rulesPanel(){
   <p class="mini" style="margin-top:8px;">Adapted from the official Power Games International rulebook (1981/1995). Saved alongside this file as original-rules.txt.</p>`);
 }
 
-/* ---------------- player profile (stored in this browser) ---------------- */
+/* ---------------- accounts (stored in this browser, portable via transfer code) ----------------
+   Several accounts can live on one device; one is signed in at a time. The
+   favourite colour is purely decoration — it never affects which army you
+   command. "Transfer code" moves an account to another device. */
+const ACCT={
+  _db(){ try{ return JSON.parse(localStorage.getItem("power-accounts"))||{accounts:{},current:null}; }catch(e){ return {accounts:{},current:null}; } },
+  _put(db){ try{ localStorage.setItem("power-accounts",JSON.stringify(db)); }catch(e){} },
+  migrate(){ // old single-profile format
+    try{ const old=JSON.parse(localStorage.getItem("power-profile"));
+      if(old&&old.name){ const db=this._db();
+        if(!db.accounts[old.name]) db.accounts[old.name]={name:old.name,fav:old.fav||0,created:Date.now(),
+          played:old.played||0,won:old.won||0,hotseat:{played:0,won:0},online:{played:0,won:0},history:[]};
+        db.current=db.current||old.name; this._put(db); }
+      localStorage.removeItem("power-profile");
+    }catch(e){}
+  },
+  list(){ return Object.values(this._db().accounts); },
+  current(){ const db=this._db(); return db.current?db.accounts[db.current]||null:null; },
+  signIn(name,fav){
+    const db=this._db();
+    if(!db.accounts[name]) db.accounts[name]={name,fav:fav??0,created:Date.now(),
+      played:0,won:0,hotseat:{played:0,won:0},online:{played:0,won:0},history:[]};
+    else if(fav!==undefined&&fav!==null) db.accounts[name].fav=fav;
+    db.current=name; this._put(db); return db.accounts[name];
+  },
+  signOut(){ const db=this._db(); db.current=null; this._put(db); },
+  update(fn){ const db=this._db(); const a=db.current&&db.accounts[db.current]; if(!a) return null; fn(a); this._put(db); return a; },
+  remove(name){ const db=this._db(); delete db.accounts[name]; if(db.current===name) db.current=null; this._put(db); },
+  exportCode(){ const a=this.current(); if(!a) return null;
+    return btoa(unescape(encodeURIComponent(JSON.stringify(a)))); },
+  importCode(code){
+    try{ const a=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
+      if(!a||!a.name) return null;
+      const db=this._db(); db.accounts[a.name]=a; db.current=a.name; this._put(db); return a;
+    }catch(e){ return null; }
+  }
+};
+ACCT.migrate();
+// thin compatibility wrapper used throughout the UI
 const PROFILE={
-  load(){ try{ return JSON.parse(localStorage.getItem("power-profile"))||null; }catch(e){ return null; } },
-  save(p){ try{ localStorage.setItem("power-profile",JSON.stringify(p)); }catch(e){} },
-  clear(){ try{ localStorage.removeItem("power-profile"); }catch(e){} }
+  load(){ return ACCT.current(); },
+  clear(){ ACCT.signOut(); }
 };
 function recordResult(winnerSeat){
-  const p=PROFILE.load(); if(!p) return false;
+  const p=ACCT.current(); if(!p) return false;
   let won=false;
   if(winnerSeat){
     if(NET.mode==="online") won=G.seats.indexOf(winnerSeat)===NET.mySeat;
     else won=winnerSeat.name===p.name;
   }
-  p.played=(p.played||0)+1; if(won) p.won=(p.won||0)+1;
-  PROFILE.save(p);
+  const mode=NET.mode==="online"?"online":"hotseat";
+  ACCT.update(a=>{
+    a.played=(a.played||0)+1; if(won) a.won=(a.won||0)+1;
+    a[mode]=a[mode]||{played:0,won:0}; a[mode].played++; if(won) a[mode].won++;
+    a.history=a.history||[];
+    a.history.unshift({d:Date.now(),mode,rounds:G.round,players:G.seats.map(s=>s.name),
+      winner:winnerSeat?winnerSeat.name:null,won});
+    a.history=a.history.slice(0,10);
+  });
   return won;
+}
+function profilePanel(){
+  const a=ACCT.current(); if(!a) return;
+  const wr=a.played?Math.round(100*a.won/a.played):0;
+  const row=(label,s)=>`<tr><td>${label}</td><td>${s.played||0}</td><td>${s.won||0}</td>
+    <td>${s.played?Math.round(100*(s.won||0)/s.played)+"%":"—"}</td></tr>`;
+  showPanel(`<h1>👤 ${esc(a.name)}</h1>
+    <div style="display:flex;align-items:center;gap:10px;margin:8px 0;">
+      <span class="mini">Favourite colour (just decorates your profile):</span>
+      <div class="swatches" id="pfav" style="margin:0;">
+        ${ARMIES.map((c,i)=>`<div class="sw ${i===(a.fav??0)?"on":""}" data-f="${i}" style="background:${c.hex};" title="${c.name}"></div>`).join("")}
+      </div>
+    </div>
+    <table class="ref"><tr><th></th><th>Played</th><th>Won</th><th>Win rate</th></tr>
+      ${row("All games",a)}${row("🛋 Hotseat",a.hotseat||{})}${row("🌐 Online",a.online||{})}
+    </table>
+    ${a.history&&a.history.length?`<h2>Recent games</h2>
+      <table class="ref"><tr><th>When</th><th>Mode</th><th>Rounds</th><th>Winner</th></tr>
+      ${a.history.map(h=>`<tr><td>${new Date(h.d).toLocaleDateString()}</td>
+        <td>${h.mode==="online"?"🌐":"🛋"}</td><td>${h.rounds}</td>
+        <td>${h.won?"🏆 ":""}${esc(h.winner||"nobody")}</td></tr>`).join("")}</table>`:`<p class="mini">No games recorded yet — go start a war.</p>`}
+    <h2>Move this account to another device</h2>
+    <p class="mini">Copy this transfer code, then paste it into “Have a transfer code?” on the other device:</p>
+    <input type="text" readonly value="${ACCT.exportCode()}" style="width:100%;font-size:11px;" onclick="this.select()">
+    <div style="margin-top:14px;">
+      <button class="btn primary" id="pfback">Back</button>
+      <button class="btn" id="pfdel" style="color:#e07b6a;">Delete account</button>
+    </div>`);
+  document.querySelectorAll("#pfav .sw").forEach(s=>s.onclick=()=>{
+    ACCT.update(x=>x.fav=+s.getAttribute("data-f"));
+    document.querySelectorAll("#pfav .sw").forEach(x=>x.classList.remove("on"));
+    s.classList.add("on"); welcomeBar(true);
+  });
+  document.getElementById("pfback").onclick=()=>{ hidePanel(); welcomeBar(true); };
+  document.getElementById("pfdel").onclick=()=>{
+    if(confirm("Delete this account and its stats from this browser?")){
+      ACCT.remove(a.name); hidePanel(); welcomeBar(true);
+    }
+  };
 }
 
 /* ---------------- game discovery (P2P lobby registry) ----------------
@@ -1540,7 +1630,7 @@ function lobbyServe(peer){
   });
 }
 function lobbyList(){ const now=Date.now();
-  return Object.values(LOBBY.games).filter(g=>now-g.ts<90000)
+  return Object.values(LOBBY.games).filter(g=>now-g.ts<90000&&(!g._c||g._c.open))
     .map(({code,host,need,joined})=>({code,host,need,joined})); }
 function lobbyOpen(cb){
   if(LOBBY.isReg&&LOBBY.peer&&!LOBBY.peer.destroyed){ cb&&cb(); return; }
@@ -1558,6 +1648,7 @@ function lobbyOpen(cb){
     const peer=new Peer(LOBBY_ID);
     let settled=false;
     peer.on("open",()=>{ if(settled) return; settled=true;
+      peer.on("disconnected",()=>{ try{ if(!peer.destroyed) peer.reconnect(); }catch(e){} });
       LOBBY.peer=peer; lobbyServe(peer); done(true); });
     peer.on("error",err=>{ if(settled) return; settled=true;
       peer.destroy();
@@ -1579,6 +1670,7 @@ function lobbyOpen(cb){
       const c=p2.connect(LOBBY_ID,{reliable:true});
       const to=setTimeout(retry,9000);                 // holder unreachable (NAT etc.)
       c.on("open",()=>{ if(settled) return; settled=true; clearTimeout(to);
+        p2.on("disconnected",()=>{ try{ if(!p2.destroyed) p2.reconnect(); }catch(e){} });
         LOBBY.peer=p2; LOBBY.conn=c;
         c.on("data",d=>{ if(d.t==="games") renderGameList(d.games); });
         c.on("close",()=>{ LOBBY.conn=null; });
@@ -1650,20 +1742,24 @@ function welcomeBar(show){
     <div style="font-weight:900;font-style:italic;font-size:26px;letter-spacing:.14em;color:#eaf6ff;text-shadow:0 0 16px #2d7fd6,0 0 36px #2d7fd680;">POWER</div>
     <div class="mini" style="letter-spacing:.24em;color:#7e93ad;">THE BOARD GAME · 1981</div>
     <div class="wdiv"></div>
-    ${p?`<div style="display:flex;align-items:center;gap:10px;">
-        <div class="sw on" style="background:${ARMIES[p.fav??0].hex};cursor:default;flex:none;"></div>
+    ${p?`<div style="display:flex;align-items:center;gap:10px;cursor:pointer;" id="pfopen" title="View profile & stats">
+        <div class="sw on" style="background:${ARMIES[p.fav??0].hex};cursor:pointer;flex:none;"></div>
         <div>
-          <div style="font-weight:800;color:#fff;font-size:15px;">${esc(p.name)}</div>
-          <div class="meta">${p.played||0} played · ${p.won||0} won
-            · <a href="#" id="signout" style="color:#7e93ad;">sign out</a></div>
+          <div style="font-weight:800;color:#fff;font-size:15px;">${esc(p.name)} <span class="meta">›</span></div>
+          <div class="meta">${p.played||0} played · ${p.won||0} won</div>
         </div>
-      </div>`
-     :`<div class="meta" style="margin-bottom:8px;">Sign in to track your wins — pick your colour:</div>
+      </div>
+      <div class="meta" style="margin-top:6px;"><a href="#" id="signout" style="color:#7e93ad;">sign out</a></div>`
+     :`<div class="meta" style="margin-bottom:8px;">Sign in to track your wins. The colour just decorates your profile — it never picks your army:</div>
+       ${ACCT.list().length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+         ${ACCT.list().slice(0,4).map(a=>`<button class="btn" data-acct="${esc(a.name)}" style="padding:4px 10px;font-size:12px;">👤 ${esc(a.name)}</button>`).join("")}
+       </div>`:""}
        <input type="text" id="pfname" maxlength="18" placeholder="Your name">
        <div class="swatches" id="favseg">
          ${ARMIES.map((a,i)=>`<div class="sw ${i===0?"on":""}" data-f="${i}" style="background:${a.hex};" title="${a.name}"></div>`).join("")}
        </div>
-       <button class="btn wbtn" id="signin">Sign in</button>`}
+       <button class="btn wbtn" id="signin">Sign in</button>
+       <div class="meta" style="margin-top:6px;text-align:center;"><a href="#" id="impacct" style="color:#7e93ad;">Have a transfer code?</a></div>`}
     <div class="wdiv"></div>
     <button class="btn primary wbtn" id="wplay" style="font-size:16px;padding:11px 0;">▶ &nbsp;Play</button>
     <div style="display:flex;gap:8px;margin-top:8px;">
@@ -1672,8 +1768,12 @@ function welcomeBar(show){
     </div>
     <p class="meta" style="margin:12px 0 0;text-align:center;">Have a look around the board —<br>the war starts when you do.</p>`;
   if(p){
-    document.getElementById("signout").onclick=(e)=>{ e.preventDefault(); PROFILE.clear(); welcomeBar(true); };
+    document.getElementById("pfopen").onclick=()=>profilePanel();
+    document.getElementById("signout").onclick=(e)=>{ e.preventDefault(); ACCT.signOut(); welcomeBar(true); };
   }else{
+    w.querySelectorAll("[data-acct]").forEach(b=>b.onclick=()=>{
+      ACCT.signIn(b.getAttribute("data-acct")); welcomeBar(true);
+    });
     w.querySelectorAll("#favseg .sw").forEach(s=>s.onclick=()=>{
       w.querySelectorAll("#favseg .sw").forEach(x=>x.classList.remove("on"));
       s.classList.add("on"); fav=+s.getAttribute("data-f");
@@ -1681,8 +1781,14 @@ function welcomeBar(show){
     document.getElementById("signin").onclick=()=>{
       const name=document.getElementById("pfname").value.trim();
       if(!name){ flash("Type a name first"); return; }
-      PROFILE.save({name,fav,played:0,won:0});
+      ACCT.signIn(name,fav);
       welcomeBar(true);
+    };
+    document.getElementById("impacct").onclick=(e)=>{ e.preventDefault();
+      const code=prompt("Paste your transfer code:");
+      if(!code) return;
+      if(ACCT.importCode(code)) welcomeBar(true);
+      else flash("That transfer code isn't valid");
     };
   }
   document.getElementById("wplay").onclick=()=>setupScreen();
