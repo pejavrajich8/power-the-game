@@ -1543,23 +1543,50 @@ function lobbyList(){ const now=Date.now();
   return Object.values(LOBBY.games).filter(g=>now-g.ts<90000)
     .map(({code,host,need,joined})=>({code,host,need,joined})); }
 function lobbyOpen(cb){
-  if(LOBBY.peer&&!LOBBY.peer.destroyed&&(LOBBY.isReg||(LOBBY.conn&&LOBBY.conn.open))){ cb&&cb(); return; }
+  if(LOBBY.isReg&&LOBBY.peer&&!LOBBY.peer.destroyed){ cb&&cb(); return; }
+  if(LOBBY.conn&&LOBBY.conn.open){ cb&&cb(); return; }
   if(!window.Peer){ renderGameList(null); return; }
-  const peer=new Peer(LOBBY_ID);
-  LOBBY.peer=peer;
-  peer.on("open",()=>{ lobbyServe(peer); cb&&cb(); });
-  peer.on("error",err=>{
-    if(err.type==="unavailable-id"){ // someone else holds the registry — connect as a client
-      const p2=new Peer(); LOBBY.peer=p2;
-      p2.on("open",()=>{
-        LOBBY.conn=p2.connect(LOBBY_ID,{reliable:true});
-        LOBBY.conn.on("open",()=>cb&&cb());
-        LOBBY.conn.on("data",d=>{ if(d.t==="games") renderGameList(d.games); });
-        LOBBY.conn.on("close",()=>{ LOBBY.conn=null; });
+  if(LOBBY.opening){ LOBBY.cbs.push(cb); return; }
+  LOBBY.opening=true; LOBBY.cbs=[cb];
+  const done=ok=>{ LOBBY.opening=false; const cbs=LOBBY.cbs||[]; LOBBY.cbs=[];
+    if(ok) cbs.forEach(f=>f&&f()); else renderGameList(null); };
+  // Try to claim the registry id; if someone holds it, connect to them as a
+  // client. A crashed tab can leave a zombie holding the id for up to a
+  // minute, so a failed connection retries the whole dance with backoff.
+  const tryClaim=(attempt)=>{
+    if(attempt>4){ done(false); return; }
+    const peer=new Peer(LOBBY_ID);
+    let settled=false;
+    peer.on("open",()=>{ if(settled) return; settled=true;
+      LOBBY.peer=peer; lobbyServe(peer); done(true); });
+    peer.on("error",err=>{ if(settled) return; settled=true;
+      peer.destroy();
+      if(err.type==="unavailable-id") tryConnect(attempt);
+      else done(false);
+    });
+  };
+  const tryConnect=(attempt)=>{
+    const p2=new Peer();
+    let settled=false;
+    const retry=()=>{ if(settled) return; settled=true; p2.destroy();
+      setTimeout(()=>tryClaim(attempt+1),2500); };
+    p2.on("error",err=>{
+      if(settled) return;
+      if(err.type==="peer-unavailable") retry();      // zombie registry holder
+      else { settled=true; p2.destroy(); done(false); }
+    });
+    p2.on("open",()=>{
+      const c=p2.connect(LOBBY_ID,{reliable:true});
+      const to=setTimeout(retry,9000);                 // holder unreachable (NAT etc.)
+      c.on("open",()=>{ if(settled) return; settled=true; clearTimeout(to);
+        LOBBY.peer=p2; LOBBY.conn=c;
+        c.on("data",d=>{ if(d.t==="games") renderGameList(d.games); });
+        c.on("close",()=>{ LOBBY.conn=null; });
+        done(true);
       });
-      p2.on("error",()=>{ if(!LOBBY.isReg) renderGameList(null); });
-    } else if(!LOBBY.isReg&&err.type!=="peer-unavailable") renderGameList(null);
-  });
+    });
+  };
+  tryClaim(0);
 }
 function lobbyQuery(){
   if(LOBBY.isReg) renderGameList(lobbyList());
@@ -1595,7 +1622,7 @@ function lobbyBrowser(){
   document.getElementById("backw").onclick=()=>{ hidePanel(); welcomeBar(true); };
   lobbyOpen(()=>lobbyQuery());
   setTimeout(()=>{ const g=document.getElementById("gamelist");
-    if(g&&/Searching/.test(g.textContent)) renderGameList(LOBBY.isReg?lobbyList():null); },8000);
+    if(g&&/Searching/.test(g.textContent)) renderGameList(LOBBY.isReg?lobbyList():null); },30000);
 }
 function renderGameList(games){
   const elx=document.getElementById("gamelist"); if(!elx) return;
