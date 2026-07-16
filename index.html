@@ -123,6 +123,17 @@ table.tiny td:nth-child(2),table.tiny td:nth-child(3),table.tiny td:nth-child(5)
 .sw.on{border-color:#fff;transform:scale(1.15);box-shadow:0 0 10px #ffffff66, inset 0 -3px 6px #0006;}
 #welcome .meta{color:#8aa2c4;font-size:11.5px;line-height:1.6;}
 #welcome .wdiv{height:1px;background:#2c456b;margin:13px -22px;}
+#youbadge{position:fixed;right:18px;bottom:18px;z-index:39;display:none;align-items:center;gap:11px;
+  background:linear-gradient(165deg,#1b2c47f2,#101c30f2);border:1px solid #35517c;border-radius:14px;
+  padding:11px 16px 11px 13px;box-shadow:0 10px 34px #000a, inset 0 1px 0 #ffffff12;backdrop-filter:blur(8px);
+  pointer-events:none;}
+#youbadge .yswatches{display:flex;gap:-6px;}
+#youbadge .ysw{width:26px;height:26px;border-radius:50%;border:2px solid #ffffff33;
+  box-shadow:inset 0 -3px 6px #0006, 0 0 10px #0006;margin-left:-8px;}
+#youbadge .ysw:first-child{margin-left:0;}
+#youbadge .ylabel{font-size:10px;letter-spacing:.18em;color:#8aa2c4;font-weight:800;text-transform:uppercase;line-height:1.3;}
+#youbadge .yname{font-size:15px;font-weight:900;color:#fff;line-height:1.15;}
+@media (max-width:980px){ #youbadge{right:10px;bottom:10px;padding:8px 12px;} }
 .gamerow{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#101c30;
   border:1px solid #2c456b;border-radius:10px;padding:10px 14px;margin:8px 0;}
 </style>
@@ -178,6 +189,11 @@ table.tiny td:nth-child(2),table.tiny td:nth-child(3),table.tiny td:nth-child(5)
 </div>
 
 <div id="overlay"><div class="panel" id="overlaypanel"></div></div>
+
+<div id="youbadge">
+  <div class="yswatches" id="youswatches"></div>
+  <div><div class="ylabel" id="youlabel">You are</div><div class="yname" id="youname"></div></div>
+</div>
 
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
@@ -1470,6 +1486,21 @@ function renderAll(){
                    UI.mode==="exec" ? "Executing" : UI.mode==="pass" ? "Pass the device" :
                    UI.mode==="over" ? "Game over" : "Setup";
   renderChips(); renderPad(); renderInspector(); renderPieces(curState());
+  renderYouBadge();
+}
+function renderYouBadge(){
+  const badge=document.getElementById("youbadge");
+  // only during active play; hidden at setup, pass-the-device, and game over
+  const active=(UI.mode==="plan"||UI.mode==="wait"||UI.mode==="exec");
+  const seatIdx=NET.mode==="online"?NET.mySeat:UI.planSeat;
+  const seat=active&&G.seats?G.seats[seatIdx]:null;
+  if(!seat){ badge.style.display="none"; return; }
+  const online=NET.mode==="online";
+  document.getElementById("youlabel").textContent=online?"You are":"Now playing";
+  document.getElementById("youname").textContent=seat.name;
+  document.getElementById("youswatches").innerHTML=seat.armies.map(a=>
+    `<div class="ysw" style="background:${ARMIES[a].hex};" title="${ARMIES[a].name}"></div>`).join("");
+  badge.style.display="flex";
 }
 
 /* ---------------- overlays ---------------- */
